@@ -1,0 +1,121 @@
+.login-page, .dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    /* width: 300px; */
+    /* margin: 100px auto; */
+    /* padding: 30px; */
+    /* border: 1px solid #ddd; */
+    /* border-radius: 4px; */
+    text-align: center;
+  }
+  
+  form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); */
+    display: flex;
+    flex-direction: column;
+
+  }
+  
+  .login-page label {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  input {
+    /* margin-bottom: 10px; */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .login-page button {
+
+    background-color: #0056b3;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 10px;
+    /* width: 80%; */
+    padding: 1em;
+    margin: 1em;
+    /* border: 0.5px solid #000000; */
+    font-weight: 500;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  .login-page h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .login-page h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    color: #000000;
+  }
+
+
+
+.login-page input[type="email"],
+.login-page input[type="password"] {
+  /* width: 100%; */
+  padding: 15px;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  margin: 1em;
+}
+
+.login-page p.error {
+  color: red;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.login-page hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 20px 0;
+}
+
+.animation-text {
+
+  height: 5em;
+}
+
+.submit-move {
+  display: flex;
+  flex-direction: column;
+  width: 230px;
+
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.8); 
+  z-index: 9999;
+}
+
+.loading-gif {
+  width: 100px; 
+  height: 100px;
+}
