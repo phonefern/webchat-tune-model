@@ -31,10 +31,7 @@ const Dashboard = () => {
     return () => clearTimeout(timer); // Cleanup the timer on component unmount
   }, [navigate]);
 
-  const handleLogout = () => {
-    auth.signOut();
-    navigate('/');
-  };
+
 
   return (
     <div className="dashboard">

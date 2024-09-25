@@ -535,31 +535,33 @@ const ChatPage = () => {
 
                     </div>
 
-                        
+
 
 
 
                 </div>
                 {/* Input Field and Send Button */}
-                <div className={`bottom-section ${isOpen ? "drawer-open" : ""}`}>
-                    <div className="input-container">
-                        <input
-                            type="text"
-                            id="question"
-                            value={question}
-                            onChange={handleInputChange}
-                            placeholder="ถามมาได้เลยจ้า..."
-                            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} // Handle Enter key
-                        />
-                        <button type="button" onClick={handleSendMessage}>
-                            <i className="fa-solid fa-arrow-up"></i>
-                        </button>
+                <div className={`bot-container ${theme} `}>
+                    <div className={`bottom-section ${isOpen ? "drawer-open" : ""} `}>
+                        <div className="input-container">
+                            <input
+                                type="text"
+                                id="question"
+                                value={question}
+                                onChange={handleInputChange}
+                                placeholder="ถามมาได้เลยจ้า..."
+                                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} // Handle Enter key
+                            />
+                            <button type="button" onClick={handleSendMessage}>
+                                <i className="fa-solid fa-arrow-up"></i>
+                            </button>
+                        </div>
+                        <h4 className="follow_text_gen">
+                            Copyright © 2024 โรงพยาบาลกรุงเทพ หาดใหญ่
+                        </h4>
                     </div>
-                    <h4 className="follow_text_gen">
-                        Copyright © 2024 โรงพยาบาลกรุงเทพ หาดใหญ่
-                    </h4>
-                </div>
 
+                </div>
                 {/* Drawer Modal */}
                 <div className={`drawer ${isOpen ? 'open' : ''}`}>
                     <div className="drawer-header">

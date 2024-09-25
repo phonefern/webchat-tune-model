@@ -904,15 +904,21 @@ button:hover {
     padding: 10px;
   }
   
-
+  
 }
 
 /* Large Screen (Desktop) */
-@media (min-width: 1025px) {
+@media (min-width: 1025px) and (max-width: 1399px) {
   .drawer {
-    width: 350px;
-    left: -370px;
+    width: 280px;
+    left: -380px;
     height: 100%;
+  }
+
+  .drawer-logo {
+    padding: 0%;
+    padding-bottom: 20px;
+    padding-left: 12px;
   }
 
   .drawer-toggle-icon,
@@ -948,6 +954,87 @@ button:hover {
   }
 
   .header-slide.drawer-open {
+    transform: translateX(280px);
+    /* Adjust as per the drawer width */
+  }
+
+  .all-container.drawer-open {
+    transform: translateX(150px); /* Adjust to match the width of your drawer */
+  }
+
+  
+  .bottom-section.drawer-open {
+    transform: translateX(180px); /* Adjust to match the width of your drawer */
+  }
+
+  .input-container input {
+    width: 700px;
+  }
+
+  .drawer-content {
+    height: 70%;
+  }
+
+  .all-container {
+    height: 78vh;
+  }
+
+}
+
+@media (min-width: 1400px) {
+
+  .all-container {
+    height: 87vh;
+  }
+
+  .bottom-section.drawer-open {
+    transform: translateX(180px); /* Adjust to match the width of your drawer */
+  }
+
+  .all-container.drawer-open {
+    transform: translateX(150px); /* Adjust to match the width of your drawer */
+  }
+
+  .drawer {
+    width: 390px;
+    left: -450px;
+    height: 100%;
+  }
+
+  .drawer-toggle-icon,
+  .backdrop-menu-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* .drawer-content .chat-item {
+    font-size: 18px;
+  } */
+
+  .input-container input,
+  .input-container button {
+    font-size: 16px;
+    padding: 16px 20px;
+  
+  }
+  .input-container input {
+    width: 900px;
+  }
+
+  .input-container {
+    width: 80%;
+  }
+
+  .user-message {
+    font-size: 1.2em;
+
+  }
+
+  .ai-message {
+    font-size: 1.2em;
+  }
+
+  .header-slide.drawer-open {
     transform: translateX(350px);
     /* Adjust as per the drawer width */
   }
@@ -956,13 +1043,8 @@ button:hover {
     height: 70%;
   }
 
-  .all-container {
-    height: 87vh;
-  }
-
+  
 }
-
-
 
 .model-selection-menu {
   position: absolute;
@@ -1093,6 +1175,10 @@ button:hover {
   color: #555;
 }
 
+.bottom-section.drak {
+  background-color: #1e1e1e;
+  color: #000000;
+}
 
 /* Dark Theme */
 .app-container.dark {
@@ -1135,6 +1221,16 @@ button:hover {
   color: #ffffff;
   font-weight: 500;
 }
+
+.bot-container {
+  height: 100px;
+}
+
+.bot-container.dark {
+  background-color: #1e1e1e;
+  /* color: #000; */
+}
+
 
 
 .app-container.dark input[type="text"],
