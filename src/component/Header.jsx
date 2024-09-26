@@ -3,10 +3,8 @@ import React, { useState } from 'react';
 
 
 
-const Header = ({ toggleDrawer, isOpen }) => {
-    const [animateHeaderLine, setAnimateHeaderLine] = useState(false);
-    const [selectedModel, setSelectedModel] = useState("packagetestv2-nettsfkvxpqs");
-    const [isModelMenuOpen, setIsModelMenuOpen] = useState(false);
+const Header = ({ toggleDrawer, isOpen, animateHeaderLine, setAnimateHeaderLine,isModelMenuOpen, setSelectedModel , setIsModelMenuOpen }) => {
+   
 
 
     const handleModelClick = () => {
@@ -27,24 +25,28 @@ const Header = ({ toggleDrawer, isOpen }) => {
             </div>
             <div className={`header-slide ${isOpen ? "drawer-open" : ""}`}>
 
-                <div id="topnav-header_gen" className="header_gen">
-                    <div className="left-section">
-                        <div className="logo_top">
-                            <h1 className="name">AskMedi Ai</h1>
-                            <div className="select-model-icon" onClick={handleModelClick}>
-                                <i className="fa-solid fa-angle-down"></i>
+                        <div id="topnav-header_gen" className="header_gen">
+                            <div className="left-section">
+                                <div className="logo_top">
+
+                                    <h1 className="name">AskMedi Ai</h1>
+
+                                    <div className="select-model-icon" onClick={handleModelClick}>
+                                        <i className="fa-solid fa-angle-down"></i>
+                                    </div>
+                                </div>
                             </div>
+
                         </div>
+                        <div className={`header-line ${animateHeaderLine ? "animate" : ""}`}></div>
+
+                        {isModelMenuOpen && (
+                            <div className="model-selection-menu">
+                                <p onClick={() => handleModelSelect("gemini-1.5-flash")}>Gemini 1.5 Flash</p>
+                                <p onClick={() => handleModelSelect("packagetestv2-nettsfkvxpqs")}>Package Test v2</p>
+                            </div>
+                        )}
                     </div>
-                </div>
-                <div className={`header-line ${animateHeaderLine ? "animate" : ""}`}></div>
-                {isModelMenuOpen && (
-                    <div className="model-selection-menu">
-                        <p onClick={() => handleModelSelect("gemini-1.5-flash")}>Gemini 1.5 Flash</p>
-                        <p onClick={() => handleModelSelect("packagetestv2-nettsfkvxpqs")}>Package Test v2</p>
-                    </div>
-                )}
-            </div>
         </div>
     );
 };

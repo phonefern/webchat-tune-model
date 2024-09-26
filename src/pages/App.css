@@ -8,7 +8,7 @@ Basic reset and box sizing * {
 body,
 html {
   font-family: 'Prompt';
-  /* height: 100vh; */
+  height: 100vh;
   /* Full height for body */
   /* display: flex; */
   justify-content: center;
@@ -19,7 +19,9 @@ html {
   overflow: hidden;
 }
 
-
+.header-slide {
+  padding-top: 1.4em;
+}
 
 .follow_text_gen {
   font-size: 12px;
@@ -225,10 +227,10 @@ h3 {
 
 
 
-.header-slide {
+/* .header-slide {
   position: relative;
-  /* This will be the reference point for absolute positioning */
-}
+
+} */
 
 
 /* Header style */
@@ -269,19 +271,7 @@ h3 {
 
 }
 
-/* .menu-icon_2 { */
-  /* width: 20px; */
-  
-  /* height: 20px; */
-  
-  /* cursor: pointer; */
-  /* position: absolute; */
-  /* top: 30px; */
-  /* left: 20px; */
- 
-  /* z-index: 1000; */
-  /* position: -webkit-sticky; */
-/* } */
+
 
 .menu-icon {
   font-size: x-large;
@@ -295,13 +285,13 @@ h3 {
   z-index: 1000;
 }
 
-.menu-icon {
-  /* width: 30px; */
+/* .menu-icon {
+  width: 30px;
   margin-left: 20px;
   margin-bottom: 5px;
-  /* margin-top: 0.2rem; */
+  margin-top: 0.2rem;
 
-}
+} */
 
 .drawer-logo {
   width: 150px;
@@ -425,7 +415,8 @@ h2 {
   background-color: #fff;
   /* height: 600px; */
   /* overflow-y: scroll; */
-  padding: 15px;
+  padding: 40px;
+  margin: 40px;
   border-radius: 8px;
   margin-bottom: 15px;
   display: flex;
@@ -536,18 +527,15 @@ button:hover {
 .drawer {
   position: fixed;
   left: -300px;
-  /* Hidden initially */
   top: 0;
   width: 250px;
   height: 100%;
   background-color: white;
-  /* Make the drawer white */
   border-right: 2px solid #ccc;
-  /* Add a light grey stroke */
   color: #333;
-  /* Dark text */
   padding: 10px;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  /* transition: opacity 0.3s ease, visibility 0.3s ease; */
+  transition: left 0.3s ease-in-out;
 }
 
 .drawer.open {
@@ -612,52 +600,47 @@ button:hover {
 }
 
 .all-container {
-  width: 80%;
-  /* Set your desired width (you can adjust this) */
-  max-width: 1200px;
-  /* Set a max width if needed */
+  /* width: 80%; */
+  /* max-width: 1200px; */
   margin: 0 auto;
-  /* Center horizontally */
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
-  /* Smooth transition for the drawer effect */
   position: relative;
-  /* Ensure it's relative for any positioning */
   height: 78vh;
-  /* margin-top: 5.7em; */
+  /* margin-top: 1.3em; */
   overflow: hidden;
 }
 
 
 
 
-.all-container {
-  transition: transform 0.3s ease; /* Ensure smooth transition */
+/* .all-container {
+  transition: transform 0.3s ease; 
   transform: translateX(0);
 }
 
 .all-container.drawer-open {
-  transform: translateX(250px); /* Adjust to match the width of your drawer */
+  transform: translateX(250px); 
 }
 
 .header-slide.drawer-open {
-  transition: transform 0.3s ease; /* Smooth transition for the header as well */
+  transition: transform 0.3s ease; 
   transform: translateX(0);
 }
 
 .header-slide.drawer-open {
-  transform: translateX(250px); /* Match this value to the drawer's width */
+  transform: translateX(250px); 
 }
 
 .bottom-section.drawer-open {
-  transition: transform 0.3s ease; /* Smooth transition for the header as well */
+  transition: transform 0.3s ease; 
   transform: translateX(0);
 }
 
 .bottom-section.drawer-open {
-  transform: translateX(300px); /* Match this value to the drawer's width */
-}
+  transform: translateX(300px); 
+} */
 
 
 
@@ -731,7 +714,7 @@ button:hover {
   /* background-color: #f8f8f8; */
   /* border-top: 1px solid #ccc; */
   align-items: center;
-  position: fixed; 
+  position: static; 
   bottom: 0; 
   width: 100%;
   padding: 10px; 
@@ -749,6 +732,7 @@ button:hover {
   right: 1px; /* Adjust this to position it away from the edge */
   z-index: 100; /* Ensure it stays on top of other elements */
   transition: opacity 0.1s ease;
+  padding-top: 0.8em;
 }
 
 .theme-switcher img {
@@ -771,8 +755,8 @@ button:hover {
     width: 270px;
   }
 
-  /* .drawer-content  {
-    height: 0%;
+  /* .menu-icon {
+    padding-top: 0.8em;
   } */
 
   .drawer-content .chat-item {
@@ -819,9 +803,16 @@ button:hover {
     ;
   }
 
-  .name {
+  /* .name, .select-model-icon {
     font-size: 1.5em;
+    position: relative;
+    top: 50px;
   }
+
+  .header-line {
+    position: relative;
+    top: 40px;
+  } */
 
   .drawer-logo {
     margin-top: 0%;
@@ -829,7 +820,7 @@ button:hover {
   }
 
   .header-slide.drawer-open {
-    transform: translateX(260px);
+    transform: translateX(2px);
     /* Adjust as per the drawer width */
   }
 
@@ -841,8 +832,8 @@ button:hover {
   .all-container {
     margin: 0;
     width: auto;
-    margin-top: 0.8em;
-    height: 80vh;
+    /* margin-top: 2em; */
+    height: 100vh;
 
 
   }
@@ -880,13 +871,41 @@ button:hover {
     flex-wrap: wrap;
   }
 
+  .chat-box {
+    padding: 0%;
+    margin: 0%;
+  }
+
 }
 
 /* Tablet Styles */
 @media (min-width: 769px) and (max-width: 1024px) {
   .drawer {
-    width: 220px;
+    width: 280px;
+    left: -450px;
+    height: 100%;
   }
+
+
+
+  /* .name, .select-model-icon {
+    font-size: 1.5em;
+    position: relative;
+    top: 60px;
+  } */
+
+  /* .header-line {
+    position: relative;
+    top: 60px;
+  } */
+
+  /* .header-slide.drawer-open {
+    transform: translateX(200px);
+  }
+
+  .all-container.drawer-open {
+    transform: translateX(130px);
+  } */
 
   .drawer-toggle-icon,
   .backdrop-menu-icon {
@@ -904,6 +923,7 @@ button:hover {
     padding: 10px;
   }
   
+
   
 }
 
@@ -953,19 +973,18 @@ button:hover {
     font-size: 1.2em;
   }
 
-  .header-slide.drawer-open {
+  /* .header-slide.drawer-open {
     transform: translateX(280px);
-    /* Adjust as per the drawer width */
   }
 
   .all-container.drawer-open {
-    transform: translateX(150px); /* Adjust to match the width of your drawer */
+    transform: translateX(150px); 
   }
 
   
   .bottom-section.drawer-open {
-    transform: translateX(180px); /* Adjust to match the width of your drawer */
-  }
+    transform: translateX(180px); 
+  } */
 
   .input-container input {
     width: 700px;
@@ -976,7 +995,7 @@ button:hover {
   }
 
   .all-container {
-    height: 78vh;
+    height: 100vh;
   }
 
 }
@@ -984,19 +1003,20 @@ button:hover {
 @media (min-width: 1400px) {
 
   .all-container {
-    height: 87vh;
+    height: 100vh;
+    /* margin-top: 1.4em; */
   }
 
-  .bottom-section.drawer-open {
-    transform: translateX(180px); /* Adjust to match the width of your drawer */
+  /* .bottom-section.drawer-open {
+    transform: translateX(180px); 
   }
 
   .all-container.drawer-open {
-    transform: translateX(150px); /* Adjust to match the width of your drawer */
-  }
+    transform: translateX(150px); 
+  } */
 
   .drawer {
-    width: 390px;
+    width: 280px;
     left: -450px;
     height: 100%;
   }
@@ -1034,10 +1054,9 @@ button:hover {
     font-size: 1.2em;
   }
 
-  .header-slide.drawer-open {
-    transform: translateX(350px);
-    /* Adjust as per the drawer width */
-  }
+  /* .header-slide.drawer-open {
+    transform: translateX(290px);
+  } */
 
   .drawer-content {
     height: 70%;

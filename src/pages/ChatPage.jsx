@@ -434,45 +434,38 @@ const ChatPage = () => {
                 <div className="menu-icon" onClick={toggleDrawer}>
                     <i className="fa-solid fa-bars"></i>
                 </div>
-                <div className={`header-slide ${isOpen ? "drawer-open" : ""}`}>
-                    <div id="topnav-header_gen" className="header_gen">
-                        <div className="left-section">
-                            <div className="logo_top">
-
-                                <h1 className="name">AskMedi Ai</h1>
-
-                                <div className="select-model-icon" onClick={handleModelClick}>
-                                    <i className="fa-solid fa-angle-down"></i>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-
-                    </div>
-                    <div className={`header-line ${animateHeaderLine ? "animate" : ""}`}></div>
-
-                    {isModelMenuOpen && (
-                        <div className="model-selection-menu">
-                            <p onClick={() => handleModelSelect("gemini-1.5-flash")}>Gemini 1.5 Flash</p>
-                            <p onClick={() => handleModelSelect("packagetestv2-nettsfkvxpqs")}>Package Test v2</p>
-                        </div>
-                    )}
-                </div>
-
-                <div className="theme-switcher" onClick={toggleTheme} >
-                    {theme === "light" ? <i className="fas fa-moon"></i> : <i className="fas fa-sun"></i>}
-                    <img src="../img/world.png" alt="lang" className="world-icon" />
-                </div>
-
-
-
 
 
 
 
                 <div className={`all-container ${isOpen ? "drawer-open" : ""}`}>
+                    <div className={`header-slide ${isOpen ? "drawer-open" : ""}`}>
+                        <div className="theme-switcher" onClick={toggleTheme} >
+                            {theme === "light" ? <i className="fas fa-moon"></i> : <i className="fas fa-sun"></i>}
+                            <img src="../img/world.png" alt="lang" className="world-icon" />
+                        </div>
+                        <div id="topnav-header_gen" className="header_gen">
+                            <div className="left-section">
+                                <div className="logo_top">
+
+                                    <h1 className="name">AskMedi Ai</h1>
+
+                                    <div className="select-model-icon" onClick={handleModelClick}>
+                                        <i className="fa-solid fa-angle-down"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div className={`header-line ${animateHeaderLine ? "animate" : ""}`}></div>
+
+                        {isModelMenuOpen && (
+                            <div className="model-selection-menu">
+                                <p onClick={() => handleModelSelect("gemini-1.5-flash")}>Gemini 1.5 Flash</p>
+                                <p onClick={() => handleModelSelect("packagetestv2-nettsfkvxpqs")}>Package Test v2</p>
+                            </div>
+                        )}
+                    </div>
                     {/* Chat Section */}
                     <div className="chat-container">
                         {/* Greeting Message */}
@@ -496,7 +489,6 @@ const ChatPage = () => {
 
 
 
-                        {/* Chat Messages */}
                         <div className="chat-box" id="answer-container">
                             {isLoading ? (
                                 <div className="loading-message"></div>
@@ -508,16 +500,21 @@ const ChatPage = () => {
                                     >
                                         <div className="message-text">
                                             {msg.sender === "bot" && index === messages.length - 1 ? (
-                                                // Apply Typewriter effect only to the last message (new message)
-                                                <Typewriter
-                                                    options={{ delay: 10 }}
-                                                    onInit={(typewriter) => {
-                                                        const cleanText = msg.text.replace(/\*/g, ""); // Clean text to avoid typewriter issues
-                                                        typewriter.typeString(cleanText).start();
-                                                    }}
-                                                />
+                                                // Apply Typewriter effect to the last message only if text length < 100
+                                                msg.text.length < 200 ? (
+                                                    <Typewriter
+                                                        options={{ delay: 10 }}
+                                                        onInit={(typewriter) => {
+                                                            const cleanText = msg.text.replace(/\*/g, "");
+                                                            typewriter.typeString(cleanText).start();
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    // If text length >= 100, render text directly without Typewriter
+                                                    msg.text
+                                                )
                                             ) : (
-                                                // For all older messages, just render the text without Typewriter
+                                                // For all older messages, just render the text
                                                 msg.text
                                             )}
                                         </div>
@@ -526,6 +523,8 @@ const ChatPage = () => {
                             )}
                             <div ref={chatEndRef} />
                         </div>
+
+
                         {/* Loading GIF */}
                         {isLoading && (
                             <div className="loading-container" style={{ textAlign: 'center', position: 'position: absolute;' }}>
@@ -535,33 +534,33 @@ const ChatPage = () => {
 
                     </div>
 
-
-
-
-
-                </div>
-                {/* Input Field and Send Button */}
-                <div className={`bot-container ${theme} `}>
-                    <div className={`bottom-section ${isOpen ? "drawer-open" : ""} `}>
-                        <div className="input-container">
-                            <input
-                                type="text"
-                                id="question"
-                                value={question}
-                                onChange={handleInputChange}
-                                placeholder="ถามมาได้เลยจ้า..."
-                                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} // Handle Enter key
-                            />
-                            <button type="button" onClick={handleSendMessage}>
-                                <i className="fa-solid fa-arrow-up"></i>
-                            </button>
+                    {/* Input Field and Send Button */}
+                    <div className={`bot-container ${theme} `}>
+                        <div className={`bottom-section ${isOpen ? "drawer-open" : ""} `}>
+                            <div className="input-container">
+                                <input
+                                    type="text"
+                                    id="question"
+                                    value={question}
+                                    onChange={handleInputChange}
+                                    placeholder="ถามมาได้เลยจ้า..."
+                                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} // Handle Enter key
+                                />
+                                <button type="button" onClick={handleSendMessage}>
+                                    <i className="fa-solid fa-arrow-up"></i>
+                                </button>
+                            </div>
+                            <h4 className="follow_text_gen">
+                                Copyright © 2024 โรงพยาบาลกรุงเทพ หาดใหญ่
+                            </h4>
                         </div>
-                        <h4 className="follow_text_gen">
-                            Copyright © 2024 โรงพยาบาลกรุงเทพ หาดใหญ่
-                        </h4>
+
                     </div>
 
+
+
                 </div>
+
                 {/* Drawer Modal */}
                 <div className={`drawer ${isOpen ? 'open' : ''}`}>
                     <div className="drawer-header">

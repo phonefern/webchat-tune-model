@@ -25,7 +25,7 @@ const Dashboard = () => {
 
     const timer = setTimeout(() => {
       setIsLoading(false); // Stop showing the loading GIF
-      navigate('/chat'); // Redirect to ChatPage after 3 seconds
+      navigate('/app'); // Redirect to ChatPage after 3 seconds
     }, 5000); 
 
     return () => clearTimeout(timer); // Cleanup the timer on component unmount

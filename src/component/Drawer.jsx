@@ -1,14 +1,54 @@
 // Drawer.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy } from "firebase/firestore";
 import { auth, db } from '../firebase'; // Firebase auth
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems, handleChatClick }) => {
+const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems, handleChatClick, deleteChat }) => {
 
     const user = auth.currentUser;
     const navigate = useNavigate();
+    const [openMenuChatId, setOpenMenuChatId] = useState(null);
+    const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
 
+    const toggleMenu = (chatId, e) => {
+        e.stopPropagation();
+
+        const rect = e.target.getBoundingClientRect();
+        setMenuPosition({ x: rect.left + window.scrollX, y: rect.top + rect.height + window.scrollY });
+
+        setOpenMenuChatId(openMenuChatId === chatId ? null : chatId);
+    };
+
+    const closeMenu = () => {
+        setOpenMenuChatId(null);
+    };
+
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!event.target.closest('.option-chat') && !event.target.closest('.fa-ellipsis-vertical')) {
+                closeMenu();
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+
+
+    const handleOptionChat = (option) => {
+        if (option === 'Edit') {
+            console.log('Edit selected for chat:', openMenuChatId);
+            // Add edit logic here
+        } else if (option === 'Delete') {
+            deleteChat(openMenuChatId);
+        }
+        closeMenu();
+    };
 
     const addNewChat = async () => {
         if (newChatTitle.trim() && user) {
@@ -17,16 +57,16 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                 title: newChatTitle,
                 date: currentDate,
                 isActive: false,
-                isRecent: true // Assuming the chat created is recent
+                isRecent: true
             };
-    
+
             // Calculate if the chat is recent (within the last day)
             const now = new Date();
             const diffDays = (now - currentDate) / (1000 * 60 * 60 * 24);
             newChat.isRecent = diffDays <= 1;
-    
+
             console.log(`Adding chat for user: ${user.uid} at path: users/${user.uid}/chats`);
-    
+
             try {
                 const docRef = await addDoc(collection(db, `users/${user.uid}/chats`), newChat);
                 setChatItems([{ id: docRef.id, ...newChat }, ...chatItems]);
@@ -36,15 +76,14 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
             }
         }
     };
-    
+
+
 
     const deleteSubcollection = async (userId) => {
         const chatsCollection = collection(db, `users/${userId}/chats`);
         const chatsSnapshot = await getDocs(chatsCollection);
 
-        // Loop through each chat document
         for (const chatDoc of chatsSnapshot.docs) {
-            // Delete messages subcollection for each chat
             const messagesCollection = collection(chatsCollection, chatDoc.id, 'messages');
             const messagesSnapshot = await getDocs(messagesCollection);
 
@@ -84,6 +123,9 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
 
     return (
         <div className={`drawer ${isOpen ? 'open' : ''}`}>
+
+
+
             <div className="drawer-header">
                 <div className="top-drawer">
                     <img src="../img/bhh_logo.png" alt="Bangkok Hospital Logo" className="drawer-logo" />
@@ -105,10 +147,25 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                         <div
                             key={chat.id}
                             className={`chat-item ${chat.isActive ? 'active' : ''}`}
-                            onClick={() => handleChatClick(chat.id)} // Set active on click
+                            onClick={() => handleChatClick(chat.id)}
                         >
                             {chat.title}
-                            <button className="delete-btn" onClick={(e) => { e.stopPropagation(); deleteChat(chat.id); }}>🗑️</button>
+                            <div
+                                className="icon-container"
+                                onClick={(e) => toggleMenu(chat.id, e)}
+                            >
+                                <i className="fa-solid fa-ellipsis-vertical"></i>
+                            </div>
+
+                            {openMenuChatId === chat.id && (
+                                <div
+                                    className="option-chat"
+                                    style={{ position: 'absolute', top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
+                                >
+                                    <p onClick={() => handleOptionChat("Edit")}>Edit</p>
+                                    <p onClick={() => handleOptionChat("Delete")}>Delete</p>
+                                </div>
+                            )}
                         </div>
                     ))}
 
@@ -120,7 +177,22 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                             onClick={() => handleChatClick(chat.id)} // Set active on click
                         >
                             {chat.title}
-                            <button className="delete-btn" onClick={(e) => { e.stopPropagation(); deleteChat(chat.id); }}>🗑️</button>
+                            <div
+                                className="icon-container"
+                                onClick={(e) => toggleMenu(chat.id, e)}
+                            >
+                                <i className="fa-solid fa-ellipsis-vertical"></i>
+                            </div>
+
+                            {openMenuChatId === chat.id && (
+                                <div
+                                    className="option-chat"
+                                    style={{ position: 'absolute', top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
+                                >
+                                    <p onClick={() => handleOptionChat("Edit")}>Edit</p>
+                                    <p onClick={() => handleOptionChat("Delete")}>Delete</p>
+                                </div>
+                            )}
                         </div>
 
                     ))}
@@ -137,7 +209,23 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                             onClick={() => handleChatClick(chat.id)} // Set active on click
                         >
                             {chat.title}
-                            <button className="delete-btn" onClick={(e) => { e.stopPropagation(); deleteChat(chat.id); }}>🗑️</button>
+                            <div
+                                className="icon-container"
+                                onClick={(e) => toggleMenu(chat.id, e)}
+                            >
+                                <i className="fa-solid fa-ellipsis-vertical"></i>
+                            </div>
+
+
+                            {openMenuChatId === chat.id && (
+                                <div
+                                    className="option-chat"
+                                    style={{ position: 'absolute', top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
+                                >
+                                    <p onClick={() => handleOptionChat("Edit")}>Edit</p>
+                                    <p onClick={() => handleOptionChat("Delete")}>Delete</p>
+                                </div>
+                            )}
                         </div>
                     ))}
 

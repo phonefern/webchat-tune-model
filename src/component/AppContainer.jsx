@@ -6,6 +6,7 @@ import ChatContainer from '../component/ChatContainer';
 import Drawer from '../component/Drawer';
 import BackDrop from '../component/BackDrop';
 import "../pages/App.css";
+import "../component/Chatstyle.css"
 import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy, getDoc, Timestamp } from "firebase/firestore";
 import { db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +28,8 @@ const AppContainer = () => {
     const [showGreeting, setShowGreeting] = useState(true);
     const [messages, setMessages] = useState([]);
     const [question, setQuestion] = useState("");
+    const [animateHeaderLine, setAnimateHeaderLine] = useState(false);
+    const [isModelMenuOpen, setIsModelMenuOpen] = useState(false);
 
     // Toggle theme (light/dark)
     const toggleTheme = () => {
@@ -99,22 +102,16 @@ const AppContainer = () => {
         if (activeChatId && user) {
             const fetchMessages = async () => {
                 try {
-                    // Reference the messages collection for the active chat
                     const messagesRef = collection(db, `users/${user.uid}/chats/${activeChatId}/messages`);
 
-                    // Query to order messages by timestamp (ascending)
                     const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
 
-                    // Fetch ordered messages
                     const messagesSnapshot = await getDocs(messagesQuery);
 
-                    // Map the snapshot to get the message data
                     const messagesList = messagesSnapshot.docs.map(doc => ({
                         id: doc.id,
                         ...doc.data()
                     }));
-
-                    // Update the state with the fetched messages
                     setMessages(messagesList);
                 } catch (error) {
                     console.error("Error fetching messages: ", error);
@@ -128,19 +125,29 @@ const AppContainer = () => {
     const deleteChat = async (id) => {
         if (user) {
             try {
-                // Simulate a 2-second delay using setTimeout
-                await new Promise(resolve => setTimeout(resolve, 2000));
-
+                
+                // await new Promise((resolve) => setTimeout(resolve, 2000));
                 await deleteDoc(doc(db, `users/${user.uid}/chats`, id));
-                setChatItems(chatItems.filter(chat => chat.id !== id));
-                setActiveChatId(null);
-                setMessages([]); // Clear messages while loading
-                setIsLoading(true); // Start loading state after the delay
+    
+                
+                setChatItems((prevChatItems) => prevChatItems.filter(chat => chat.id !== id));
+    
+                if (activeChatId === id) {
+                    setActiveChatId(true);
+                    setMessages([]); 
+                }
+
+                // setActiveChatId(null);
+                // setMessages([]); 
+    
+              
+                setIsLoading(false);  
             } catch (error) {
                 console.error("Error deleting chat: ", error);
             }
         }
     };
+    
 
     const handleChatClick = async (id) => {
         if (activeChatId === id && messages.length > 0) {
@@ -267,8 +274,8 @@ const AppContainer = () => {
 
         try {
 
-            // const response = await fetch("https://geminiapi-flame.vercel.app/api/index", {
-            const response = await fetch("http://localhost:3000/ask-ai", {
+            const response = await fetch("https://geminiapi-flame.vercel.app/api/index", {
+            // const response = await fetch("http://localhost:3000/ask-ai", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ question: userMessageText, model: selectedModel }),
@@ -305,22 +312,28 @@ const AppContainer = () => {
     return (
         <div>
             <div className={`app-container ${theme}`}>
-                <Header
-                    toggleDrawer={toggleDrawer}
-                    isOpen={isOpen}
-                //   isModelMenuOpen={isModelMenuOpen}
-                />
-                <ThemeSwitcher theme={theme} toggleTheme={toggleTheme} />
-                <ChatContainer
-                    isOpen={isOpen}
-                    messages={messages}
-                    handleSendMessage={handleSendMessage}
-                    question={question}
-                    handleInputChange={handleInputChange}
-                    isLoading={isLoading}
-                    showGreeting={showGreeting}
-                    setQuestion={setQuestion}
-                />
+                <div className={`all-container ${isOpen ? "drawer-open" : ""}`}>
+                    <Header
+                        toggleDrawer={toggleDrawer}
+                        isOpen={isOpen}
+                        isModelMenuOpen={isModelMenuOpen}
+                        animateHeaderLine={animateHeaderLine}
+                        setIsModelMenuOpen={setIsModelMenuOpen}
+                        setSelectedModel={setSelectedModel}
+                        setAnimateHeaderLine={setAnimateHeaderLine}
+                    />
+                    <ThemeSwitcher theme={theme} toggleTheme={toggleTheme} />
+                    <ChatContainer
+                        isOpen={isOpen}
+                        messages={messages}
+                        handleSendMessage={handleSendMessage}
+                        question={question}
+                        handleInputChange={handleInputChange}
+                        isLoading={isLoading}
+                        showGreeting={showGreeting}
+                        setQuestion={setQuestion}
+                    />
+                </div>
                 <Drawer
                     isOpen={isOpen}
                     newChatTitle={newChatTitle}
