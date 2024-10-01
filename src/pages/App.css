@@ -19,8 +19,20 @@ html {
   overflow: hidden;
 }
 
-.header-slide {
+/* .header-slide {
   padding-top: 1.4em;
+} */
+
+.app-container {
+  display: flex;
+  flex-direction: column; /* Stacks items vertically */
+  height: 100vh; /* Full viewport height */
+}
+
+.all-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Takes full width of the screen */
 }
 
 .follow_text_gen {
@@ -283,6 +295,7 @@ h3 {
   left: 20px;
   /* Positioned at the edge of the screen */
   z-index: 1000;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
 /* .menu-icon {
@@ -384,22 +397,18 @@ h3 {
 } */
 
 .chat-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1000px; /* Max width for large screens */
+  height: 80vh; 
   background-color: #fff;
-  /* width: 400px; */
   border-radius: 10px;
-  /* box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); */
+  /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
   padding: 20px;
-  /* display: flex; */
-  flex-direction: column;
-  flex: 1;
-  overflow: auto;
-  /* text-align: center; */
-  /* justify-content: center; */
-  flex-direction: column;
-  position: relative;
-  /* align-items: center; */
-  /* margin-top: 4em; */
-
+  margin: auto;
+  overflow: hidden;
 }
 
 
@@ -413,8 +422,8 @@ h2 {
 
 .chat-box {
   background-color: #fff;
-  /* height: 600px; */
-  /* overflow-y: scroll; */
+  /* height: 100%; */
+  overflow-y: scroll;
   padding: 40px;
   margin: 40px;
   border-radius: 8px;
@@ -535,7 +544,7 @@ button:hover {
   color: #333;
   padding: 10px;
   /* transition: opacity 0.3s ease, visibility 0.3s ease; */
-  transition: left 0.3s ease-in-out;
+  transition: left 0.2s ease-in-out;
 }
 
 .drawer.open {
@@ -607,11 +616,14 @@ button:hover {
   flex-direction: column;
   transition: transform 0.3s ease;
   position: relative;
-  height: 78vh;
+  height: 100%;
   /* margin-top: 1.3em; */
-  overflow: hidden;
+  /* overflow: auto; */
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: flex-start;
+  align-items: stretch;
 }
-
 
 
 
@@ -709,7 +721,7 @@ button:hover {
 .bottom-section {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   padding: 10px;
   /* background-color: #f8f8f8; */
   /* border-top: 1px solid #ccc; */
@@ -727,10 +739,10 @@ button:hover {
   display: flex;
   align-items: center;
   /* transition: none; */
-  position: absolute; /* Or fixed, depending on the layout */
-  top: 20px; /* Adjust the positioning as needed */
-  right: 1px; /* Adjust this to position it away from the edge */
-  z-index: 100; /* Ensure it stays on top of other elements */
+  position: absolute; 
+  /* top: 20px;  */
+  right: 1px; 
+  /* z-index: 100;  */
   transition: opacity 0.1s ease;
   padding-top: 0.8em;
 }
@@ -739,25 +751,66 @@ button:hover {
   padding-left: 1em;
 }
 
+.header-slide.drawer-open .menu-icon {
+  opacity: 0; 
+  pointer-events: none; 
+  display: none; 
+  /* transition: opacity 0.01s ease; */
+}
+
+.greeting-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+
+  /* color: #555; */
+  text-align: center;
+  /* padding: 20px; */
+  /* border: 1px solid #ddd; */
+  border-radius: 10px;
+  /* background-color: #f9f9f9; */
+  /* position: absolute; */
+  font-size: 2em;
+  opacity: 0;
+  /* Start hidden */
+  transform: translateY(-20px);
+  /* Start from above */
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  /* Smooth transition */
+  flex-direction: column;
+}
+
+
+.prompt-button {
+  display: inline-block;
+  margin: 2em;
+  padding: 10px 15px;
+  background-color: #f0f4f9;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 20px;
+  transition: background-color 0.3s ease;
+  /* width: 10em; */
+  height: 10em;
+  color: #000;
+
+
+}
+
+
+
 @media (max-width: 768px) {
 
   .header-slide.drawer-open + .theme-switcher {
-    opacity: 0; /* Hide the theme-switcher with a fade-out effect */
-    pointer-events: none; /* Disable interaction */
-  }
-
-  .theme-switcher {
-    /* font-size: 1em; */
-    top: 15px;
+    opacity: 0; 
+    pointer-events: none; 
   }
 
   .drawer {
     width: 270px;
   }
-
-  /* .menu-icon {
-    padding-top: 0.8em;
-  } */
 
   .drawer-content .chat-item {
     font-size: 14px;
@@ -786,6 +839,7 @@ button:hover {
     margin: 10px;
     padding: 10px;
     /* margin-top: 6em; */
+    height: 70vh;
   }
 
   .user-message {
@@ -803,17 +857,6 @@ button:hover {
     ;
   }
 
-  /* .name, .select-model-icon {
-    font-size: 1.5em;
-    position: relative;
-    top: 50px;
-  }
-
-  .header-line {
-    position: relative;
-    top: 40px;
-  } */
-
   .drawer-logo {
     margin-top: 0%;
     width: 120px;
@@ -821,7 +864,6 @@ button:hover {
 
   .header-slide.drawer-open {
     transform: translateX(2px);
-    /* Adjust as per the drawer width */
   }
 
   .new-chat-btn {
@@ -834,9 +876,8 @@ button:hover {
     width: auto;
     /* margin-top: 2em; */
     height: 100vh;
-
-
   }
+
 
   .model-selection-menu {
     right: 4em;
@@ -848,14 +889,22 @@ button:hover {
   .greeting-message {
     font-size: 1.3em;
     position: absolute;
+    height: 60%;
+    /* position: ; */
+    
   }
 
   .prompt-button {
+    font-size: 14px;
     width: 10em;
   }
 
   .chat-message {
     gap: 5px;
+  }
+
+  .logo_top h1 {
+    padding-left: 1em;
   }
 
   .promt-column {
@@ -871,9 +920,30 @@ button:hover {
     flex-wrap: wrap;
   }
 
+
+
+}
+
+@media (max-width: 480px) {
+
+  .chat-container {
+  
+    height:70vh;
+    max-width: fit-content;
+
+  }
+
+  .prompt-button {
+    font-size: 14px;
+  }
+
+  .logo_top h1 {
+    padding-left: 1em;
+  }
+
   .chat-box {
-    padding: 0%;
-    margin: 0%;
+
+    margin: 10px;
   }
 
 }
@@ -886,7 +956,10 @@ button:hover {
     height: 100%;
   }
 
+  .chat-container {
 
+    height: 70vh;
+  }
 
   /* .name, .select-model-icon {
     font-size: 1.5em;
@@ -960,6 +1033,11 @@ button:hover {
 
   }
 
+  .chat-container {
+
+    height: 80vh;
+  }
+
   .input-container {
     width: 80%;
   }
@@ -1000,12 +1078,21 @@ button:hover {
 
 }
 
-@media (min-width: 1400px) {
+@media (min-width: 1400px) and (max-width: 4600px) {
 
   .all-container {
     height: 100vh;
     /* margin-top: 1.4em; */
   }
+
+  .chat-container {
+
+    height: 70vh;
+  }
+
+  /* .chat-box {
+    height: 100%;
+  } */
 
   /* .bottom-section.drawer-open {
     transform: translateX(180px); 
@@ -1155,28 +1242,7 @@ button:hover {
   color: #cc0000;
 }
 
-.greeting-message {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80%;
 
-  /* color: #555; */
-  text-align: center;
-  padding: 20px;
-  /* border: 1px solid #ddd; */
-  border-radius: 10px;
-  /* background-color: #f9f9f9; */
-  /* position: absolute; */
-  font-size: 2em;
-  opacity: 0;
-  /* Start hidden */
-  transform: translateY(-20px);
-  /* Start from above */
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  /* Smooth transition */
-  flex-direction: column;
-}
 
 .greeting-message.show {
   opacity: 1;
@@ -1267,22 +1333,7 @@ button:hover {
   margin-bottom: 20px;
 }
 
-.prompt-button {
-  display: inline-block;
-  margin: 2em;
-  padding: 10px 15px;
-  background-color: #f0f4f9;
-  border: none;
-  cursor: pointer;
-  font-size: 0.6em;
-  border-radius: 20px;
-  transition: background-color 0.3s ease;
-  /* width: 10em; */
-  height: 10em;
-  color: #000;
 
-
-}
 
 .prompt-button {
   opacity: 0;
@@ -1312,6 +1363,7 @@ button:hover {
 .prompt-column {
   display: flex;
   width: 100%;
+  
 }
 
 .chat-item.active {

@@ -1,15 +1,17 @@
 // Drawer.jsx
-import React, { useState, useEffect } from 'react';
-import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy } from "firebase/firestore";
+import React, { useState, useEffect, useRef } from 'react';
+import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy, updateDoc  } from "firebase/firestore";
 import { auth, db } from '../firebase'; // Firebase auth
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems, handleChatClick, deleteChat }) => {
+const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems, toggleDrawer, activeChatId, setIsLoading, handleChatClick }) => {
 
     const user = auth.currentUser;
     const navigate = useNavigate();
     const [openMenuChatId, setOpenMenuChatId] = useState(null);
     const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+    const [editingChatId, setEditingChatId] = useState(null);
+    const [editedChatTitle, setEditedChatTitle] = useState('');
 
     const toggleMenu = (chatId, e) => {
         e.stopPropagation();
@@ -24,6 +26,34 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
         setOpenMenuChatId(null);
     };
 
+    
+
+
+    const deleteChat = async (id) => {
+        if (user) {
+            try {
+
+                // await new Promise((resolve) => setTimeout(resolve, 2000));
+                await deleteDoc(doc(db, `users/${user.uid}/chats`, id));
+
+
+                setChatItems((prevChatItems) => prevChatItems.filter(chat => chat.id !== id));
+
+                if (activeChatId === id) {
+                    setActiveChatId(true);
+                    setMessages([]);
+                }
+
+                // setActiveChatId(null);
+                // setMessages([]); 
+
+
+                setIsLoading(false);
+            } catch (error) {
+                console.error("Error deleting chat: ", error);
+            }
+        }
+    };
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -40,15 +70,25 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
 
 
 
-    const handleOptionChat = (option) => {
+    const handleOptionChat = (option, e) => {
+        e.stopPropagation();
         if (option === 'Edit') {
             console.log('Edit selected for chat:', openMenuChatId);
-            // Add edit logic here
+    
+            const chatToEdit = chatItems.find(chat => chat.id === openMenuChatId);
+    
+            if (chatToEdit) {
+               
+                setEditingChatId(openMenuChatId);
+                setEditedChatTitle(chatToEdit.title); 
+            }
         } else if (option === 'Delete') {
-            deleteChat(openMenuChatId);
+            deleteChat(openMenuChatId); 
         }
-        closeMenu();
+    
+        closeMenu(); 
     };
+    
 
     const addNewChat = async () => {
         if (newChatTitle.trim() && user) {
@@ -77,6 +117,56 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
         }
     };
 
+    const drawerRef = useRef(null);
+
+    const handleEditClick = (chatId, currentTitle) => {
+        setEditingChatId(chatId);
+        setEditedChatTitle(currentTitle);
+    };
+
+    const updateChatTitle = async (chatId) => {
+        if (editedChatTitle.trim() === '') return; 
+
+        try {
+         
+            const chatDocRef = doc(db, `users/${user.uid}/chats`, chatId);
+            await updateDoc(chatDocRef, { title: editedChatTitle });
+
+        
+            setChatItems(chatItems.map(chat =>
+                chat.id === chatId ? { ...chat, title: editedChatTitle } : chat
+            ));
+
+          
+            setEditingChatId(null);
+            setEditedChatTitle('');
+        } catch (error) {
+            console.error('Error updating chat title:', error);
+        }
+    };
+
+    const handleClickOutside = (event) => {
+        if (drawerRef.current && !drawerRef.current.contains(event.target)) {
+            if (editingChatId) {
+                updateChatTitle(editingChatId);
+            }
+        }
+    };
+
+    const handleKeyDown = (event, chatId) => {
+        if (event.key === 'Enter') {
+            updateChatTitle(chatId);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [editingChatId]);
+
 
 
     const deleteSubcollection = async (userId) => {
@@ -87,20 +177,20 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
             const messagesCollection = collection(chatsCollection, chatDoc.id, 'messages');
             const messagesSnapshot = await getDocs(messagesCollection);
 
-            // Loop through each message document and delete
+
             for (const messageDoc of messagesSnapshot.docs) {
                 await deleteDoc(doc(messagesCollection, messageDoc.id));
             }
 
-            // Now delete the chat document itself
+
             await deleteDoc(doc(chatsCollection, chatDoc.id));
         }
     };
 
-    // Function to handle logout
+
     const handleLogout = async () => {
         try {
-            const user = auth.currentUser; // Get the currently signed-in user
+            const user = auth.currentUser;
 
             if (user && user.isAnonymous) {
 
@@ -112,7 +202,7 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
 
             // Sign out the user
             await signOut(auth);
-            navigate('/'); // Redirect to login page after sign out
+            navigate('/');
         } catch (error) {
             console.error("Error signing out:", error);
         }
@@ -123,13 +213,14 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
 
     return (
         <div className={`drawer ${isOpen ? 'open' : ''}`}>
-
-
-
+            <div className="menu-icon" onClick={toggleDrawer}>
+                <i className="fa-solid fa-bars"></i>
+            </div>
             <div className="drawer-header">
                 <div className="top-drawer">
                     <img src="../img/bhh_logo.png" alt="Bangkok Hospital Logo" className="drawer-logo" />
                 </div>
+
                 <input
                     type="text"
                     value={newChatTitle}
@@ -149,7 +240,22 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                             className={`chat-item ${chat.isActive ? 'active' : ''}`}
                             onClick={() => handleChatClick(chat.id)}
                         >
-                            {chat.title}
+                            {editingChatId === chat.id ? (
+                                <input
+                                    type="text"
+                                    value={editedChatTitle}
+                                    onChange={(e) => setEditedChatTitle(e.target.value)}
+                                    onKeyDown={(e) => handleKeyDown(e, chat.id)} 
+                                    autoFocus 
+                                    onBlur={() => updateChatTitle(chat.id)} 
+                                />
+                            ) : (
+                                <div onClick={() => handleEditClick(chat.id, chat.title)}>
+                                    {chat.title}
+                                </div>
+                            )}
+
+
                             <div
                                 className="icon-container"
                                 onClick={(e) => toggleMenu(chat.id, e)}
@@ -161,10 +267,11 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                                 <div
                                     className="option-chat"
                                     style={{ position: 'absolute', top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
-                                >
-                                    <p onClick={() => handleOptionChat("Edit")}>Edit</p>
-                                    <p onClick={() => handleOptionChat("Delete")}>Delete</p>
-                                </div>
+                                    onClick={(e) => e.stopPropagation()}  
+                                    >
+                                        <p onClick={(e) => handleOptionChat("Edit", e)}>Edit</p>  
+                                        <p onClick={(e) => handleOptionChat("Delete", e)}>Delete</p>  
+                                    </div>
                             )}
                         </div>
                     ))}
@@ -210,6 +317,7 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                         >
                             {chat.title}
                             <div
+
                                 className="icon-container"
                                 onClick={(e) => toggleMenu(chat.id, e)}
                             >

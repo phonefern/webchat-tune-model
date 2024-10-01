@@ -122,72 +122,33 @@ const AppContainer = () => {
         }
     }, [activeChatId, user]);
 
-    const deleteChat = async (id) => {
-        if (user) {
-            try {
-                
-                // await new Promise((resolve) => setTimeout(resolve, 2000));
-                await deleteDoc(doc(db, `users/${user.uid}/chats`, id));
-    
-                
-                setChatItems((prevChatItems) => prevChatItems.filter(chat => chat.id !== id));
-    
-                if (activeChatId === id) {
-                    setActiveChatId(true);
-                    setMessages([]); 
-                }
-
-                // setActiveChatId(null);
-                // setMessages([]); 
-    
-              
-                setIsLoading(false);  
-            } catch (error) {
-                console.error("Error deleting chat: ", error);
-            }
-        }
-    };
-    
-
     const handleChatClick = async (id) => {
         if (activeChatId === id && messages.length > 0) {
-            return; // Don't fetch again if already active
+            return; 
         }
+        setMessages([]); 
+        setIsLoading(true); 
+        setActiveChatId(id);  
 
-        setMessages([]); // Clear messages while loading
-
-        setIsLoading(true);  // Start loading state
-
-
-
-        setActiveChatId(id);  // Set the new active chat
-
-        // Mark the clicked chat as active and deactivate others
         setChatItems(chatItems.map(chat => ({
             ...chat,
             isActive: chat.id === id
         })));
-
-        setIsOpen(close); // Open the drawer when a chat is clicked
-
-        // Wait for 3 seconds before fetching messages
+        setIsOpen(close); 
         await new Promise(resolve => setTimeout(resolve, 2000));
-
         try {
-
             const messagesCollection = collection(db, `users/${user.uid}/chats/${id}/messages`);
-            const messagesQuery = query(messagesCollection, orderBy('timestamp', 'asc'));  // Sort by timestamp, ascending
+            const messagesQuery = query(messagesCollection, orderBy('timestamp', 'asc'));  
             const messagesSnapshot = await getDocs(messagesQuery);
             const messagesList = messagesSnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
-
-            setMessages(messagesList); // Update the message state
+            setMessages(messagesList); 
         } catch (error) {
             console.error("Error fetching messages: ", error);
         } finally {
-            setIsLoading(false); // Stop loading after fetching
+            setIsLoading(false); 
         }
     };
 
@@ -252,30 +213,28 @@ const AppContainer = () => {
 
         const userMessageText = question.trim();
 
-        // If the user didn't type a message, show an error
+        
         if (!userMessageText) {
             setMessages((prevMessages) => [...prevMessages, { sender: "error", text: "กรุณากรอกคำถาม!" }]);
             return;
         }
-
-        // Check if there's an active chat ID, or if it was deleted
         let currentChatId = activeChatId;
 
         if (!currentChatId) {
-            currentChatId = await createNewChat(); // Create chat and get ID
-            setActiveChatId(currentChatId); // Set the newly created chat as active
+            currentChatId = await createNewChat(); 
+            setActiveChatId(currentChatId); 
         }
 
 
         const userMessage = { sender: "user", text: userMessageText };
-        addMessageToChat(currentChatId, userMessage.text, "user"); // Firestore
-        setMessages((prevMessages) => [...prevMessages, userMessage]); // UI
-        setQuestion(''); // Clear input field
+        addMessageToChat(currentChatId, userMessage.text, "user"); 
+        setMessages((prevMessages) => [...prevMessages, userMessage]); 
+        setQuestion(''); 
 
         try {
-
             const response = await fetch("https://geminiapi-flame.vercel.app/api/index", {
             // const response = await fetch("http://localhost:3000/ask-ai", {
+            // const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyAYinKiYLPNeCT5pqRQkpp5UDP_cO9pmYc', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ question: userMessageText, model: selectedModel }),
@@ -287,19 +246,18 @@ const AppContainer = () => {
                 const botMessageText = result.answer || "No answer received";
                 const botMessage = { sender: "bot", text: botMessageText };
 
-
-                addMessageToChat(currentChatId, botMessage.text, "bot"); // Firestore
-                setMessages((prevMessages) => [...prevMessages, botMessage]); // UI
+                addMessageToChat(currentChatId, botMessage.text, "bot"); 
+                setMessages((prevMessages) => [...prevMessages, botMessage]); 
                 console.log("Send Messages Pass");
             } else {
-                // Handle errors from the response
+                
                 const errorMessage = result.error || "Error occurred";
                 const errorMsg = { sender: "error", text: errorMessage };
                 setMessages((prevMessages) => [...prevMessages, errorMsg]);
             }
         } catch (error) {
             console.error("Error:", error);
-            // Handle network errors
+            
             setMessages((prevMessages) => [...prevMessages, { sender: "error", text: "Cannot connect to server" }]);
         }
     };
@@ -336,12 +294,14 @@ const AppContainer = () => {
                 </div>
                 <Drawer
                     isOpen={isOpen}
+                    toggleDrawer={toggleDrawer}
                     newChatTitle={newChatTitle}
                     setNewChatTitle={setNewChatTitle}
                     chatItems={chatItems}
                     setChatItems={setChatItems}
-                    deleteChat={deleteChat}
+                    // deleteChat={deleteChat}
                     handleChatClick={handleChatClick}
+                    
 
                 />
                 <BackDrop isOpen={isOpen} toggleDrawer={toggleDrawer} />

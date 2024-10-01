@@ -1,6 +1,6 @@
-.chat-container {
+/* .chat-container {
     height: 70vh;
-}
+} */
 
 .option-chat {
     position: absolute;
@@ -44,7 +44,7 @@
 }
 
 .icon-container:hover {
-    background-color: #f0f0f0; /* Light background on hover */
+    background-color: #333; /* Light background on hover */
     cursor: pointer;
     transform: scale(1.1); /* Slight zoom effect on hover */
 }
@@ -59,5 +59,9 @@
     display: flex;
     justify-content: center;
     align-content: center;
+}
+
+.icon-container :active {
+    background-color: #333;
 }
 

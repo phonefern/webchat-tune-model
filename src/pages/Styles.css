@@ -46,7 +46,7 @@
     padding: 1em;
     margin: 1em;
     /* border: 0.5px solid #000000; */
-    font-weight: 500;
+    font-weight: bold;
   }
   
   button:hover {
