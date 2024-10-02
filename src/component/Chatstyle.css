@@ -65,3 +65,46 @@
     background-color: #333;
 }
 
+.uploaded-image {
+    max-width: 100%; 
+    height: auto; 
+    border-radius: 8px; 
+    margin-top: 8px; 
+}
+
+
+.fa-file-image {
+    cursor: pointer;
+    padding: 20px;
+    background-color: aliceblue;
+    border-radius: 30px;
+}
+
+.fa-file-image:hover {
+
+    background-color: #cecfd1;
+}
+
+.fa-arrow-up {
+
+    cursor: pointer;
+    padding: 20px;
+    background-color: aliceblue;
+    border-radius: 30px;
+}
+
+.fa-arrow-up:hover {
+
+    background-color: #cecfd1;
+}
+
+@media (max-width: 768px) {
+
+    .fa-file-image {
+        padding: 10px;
+    }
+
+    .fa-arrow-up {
+        padding: 10px;
+    }
+}

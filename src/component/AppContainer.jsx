@@ -30,6 +30,9 @@ const AppContainer = () => {
     const [question, setQuestion] = useState("");
     const [animateHeaderLine, setAnimateHeaderLine] = useState(false);
     const [isModelMenuOpen, setIsModelMenuOpen] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
 
     // Toggle theme (light/dark)
     const toggleTheme = () => {
@@ -64,7 +67,7 @@ const AppContainer = () => {
 
     useEffect(() => {
         const fetchChats = async () => {
-            if (!user) return; // Exit if no user is logged in
+            if (!user) return; 
             try {
                 const chatCollection = collection(db, `users/${user.uid}/chats`);
                 const chatSnapshot = await getDocs(chatCollection);
@@ -74,17 +77,17 @@ const AppContainer = () => {
                         id: doc.id,
                         ...chatData,
                         isActive: false,
-                        date: chatData.date && chatData.date.toDate(),  // Convert Firestore Timestamp to JS Date
-                        isRecent: isRecent(chatData.date ? chatData.date.toDate() : new Date()),  // Ensure the date is recent
+                        date: chatData.date && chatData.date.toDate(),  
+                        isRecent: isRecent(chatData.date ? chatData.date.toDate() : new Date()),  
                     };
                 });
 
-                // Sort chatList by date to find the latest chat
+            
                 const sortedChatList = chatList.sort((a, b) => b.date - a.date);
 
                 if (sortedChatList.length > 0) {
-                    sortedChatList[0].isActive = true; // Mark the latest chat as active
-                    setActiveChatId(sortedChatList[0].id); // Track active chat ID
+                    sortedChatList[0].isActive = true; 
+                    setActiveChatId(sortedChatList[0].id); 
                 }
 
                 setChatItems(sortedChatList);
@@ -160,7 +163,7 @@ const AppContainer = () => {
     };
 
     const createNewChat = async () => {
-        const newChatTitle = "Start Chat"; // Default chat title when no chats exist
+        const newChatTitle = "Start Chat"; 
         if (user) {
             const currentDate = new Date();
             const newChat = {
@@ -190,7 +193,7 @@ const AppContainer = () => {
     // Function to add messages to Firestore (user or bot)
     const addMessageToChat = async (activeChatId, messageText, sender) => {
 
-        if (!activeChatId || !user) return; // Ensure there's an active chat and user is logged in
+        if (!activeChatId || !user) return; 
         try {
             const messagesCollection = collection(db, `users/${user.uid}/chats/${activeChatId}/messages`);
             const timestamp = new Date()
@@ -201,13 +204,75 @@ const AppContainer = () => {
                 // timeInThai: new Date(timestamp).toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' })
             };
 
-            await addDoc(messagesCollection, messageData); // Save message to Firestore
+            await addDoc(messagesCollection, messageData);
         } catch (error) {
             console.error("Error adding message to Firestore:", error);
         }
     };
 
-    // Handle sending message
+    
+    // const handleSendMessage = async (e) => {
+    //     e.preventDefault();
+
+    //     const userMessageText = question.trim();
+
+      
+    //     if (!userMessageText && !imageFile) {
+    //         setMessages((prevMessages) => [...prevMessages, { sender: "error", text: "กรุณากรอกคำถามหรือเลือกไฟล์ภาพ!" }]);
+    //         return;
+    //     }
+
+    //     let currentChatId = activeChatId;
+
+    //     if (!currentChatId) {
+    //         currentChatId = await createNewChat(); 
+    //         setActiveChatId(currentChatId); 
+    //     }
+
+     
+    //     const userMessage = { sender: "user", text: userMessageText || "Uploaded an image" , image: imagePreview};
+    //     addMessageToChat(currentChatId, userMessage.text, "user"); 
+    //     setMessages((prevMessages) => [...prevMessages, userMessage]); 
+    //     setImagePreview(null);
+    //     setQuestion(''); 
+    //     setImageFile(null); 
+
+    //     try {
+            
+    //         const formData = new FormData();
+    //         formData.append('question', userMessageText ); 
+    //         if (imageFile) {
+    //             formData.append('image', imageFile); 
+    //         }
+    //         formData.append('model', selectedModel);
+
+    //         const response = await fetch("https://geminiapi-flame.vercel.app/api/index", {
+    //         const response = await fetch("http://localhost:3000/ask-ai", {
+    //             method: "POST",
+    //             body: formData, 
+    //         });
+
+    //         const result = await response.json();
+    //         console.log(result);
+    //         if (response.ok) {
+    //             const botMessageText = result.answer || "No answer received";
+    //             const botMessage = { sender: "bot", text: botMessageText };
+
+    //             addMessageToChat(currentChatId, botMessage.text, "bot"); 
+    //             setMessages((prevMessages) => [...prevMessages, botMessage]); 
+    //             console.log("Send Messages Pass");
+    //         } else {
+    //             const errorMessage = result.error || "Error occurred";
+    //             const errorMsg = { sender: "error", text: errorMessage };
+    //             setMessages((prevMessages) => [...prevMessages, errorMsg]);
+    //         }
+    //     } catch (error) {
+    //         console.error("Error:", error);
+    //         setMessages((prevMessages) => [...prevMessages, { sender: "error", text: "Cannot connect to server" }]);
+    //     }
+    // };
+    
+    
     const handleSendMessage = async (e) => {
         e.preventDefault();
 
@@ -261,6 +326,7 @@ const AppContainer = () => {
             setMessages((prevMessages) => [...prevMessages, { sender: "error", text: "Cannot connect to server" }]);
         }
     };
+    
 
     // Handle input change
     const handleInputChange = (event) => {
@@ -290,6 +356,9 @@ const AppContainer = () => {
                         isLoading={isLoading}
                         showGreeting={showGreeting}
                         setQuestion={setQuestion}
+                        setSelectedFile={setSelectedFile}
+                        setImageFile={setImageFile}
+                        setImagePreview={setImagePreview}
                     />
                 </div>
                 <Drawer

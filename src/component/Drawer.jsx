@@ -279,28 +279,44 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                     <h3>Yesterday</h3>
                     {chatItems.filter(chat => !chat.isRecent && chat.date > (new Date().getTime() - (1000 * 60 * 60 * 24 * 2))).map(chat => (
                         <div
-                            key={chat.id}
-                            className={`chat-item ${chat.isActive ? 'active' : ''}`}
-                            onClick={() => handleChatClick(chat.id)} // Set active on click
-                        >
-                            {chat.title}
-                            <div
-                                className="icon-container"
-                                onClick={(e) => toggleMenu(chat.id, e)}
-                            >
-                                <i className="fa-solid fa-ellipsis-vertical"></i>
+                        key={chat.id}
+                        className={`chat-item ${chat.isActive ? 'active' : ''}`}
+                        onClick={() => handleChatClick(chat.id)}
+                    >
+                        {editingChatId === chat.id ? (
+                            <input
+                                type="text"
+                                value={editedChatTitle}
+                                onChange={(e) => setEditedChatTitle(e.target.value)}
+                                onKeyDown={(e) => handleKeyDown(e, chat.id)} 
+                                autoFocus 
+                                onBlur={() => updateChatTitle(chat.id)} 
+                            />
+                        ) : (
+                            <div onClick={() => handleEditClick(chat.id, chat.title)}>
+                                {chat.title}
                             </div>
+                        )}
 
-                            {openMenuChatId === chat.id && (
-                                <div
-                                    className="option-chat"
-                                    style={{ position: 'absolute', top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
-                                >
-                                    <p onClick={() => handleOptionChat("Edit")}>Edit</p>
-                                    <p onClick={() => handleOptionChat("Delete")}>Delete</p>
-                                </div>
-                            )}
+
+                        <div
+                            className="icon-container"
+                            onClick={(e) => toggleMenu(chat.id, e)}
+                        >
+                            <i className="fa-solid fa-ellipsis-vertical"></i>
                         </div>
+
+                        {openMenuChatId === chat.id && (
+                            <div
+                                className="option-chat"
+                                style={{ position: 'absolute', top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
+                                onClick={(e) => e.stopPropagation()}  
+                                >
+                                    <p onClick={(e) => handleOptionChat("Edit", e)}>Edit</p>  
+                                    <p onClick={(e) => handleOptionChat("Delete", e)}>Delete</p>  
+                                </div>
+                        )}
+                    </div>
 
                     ))}
 
@@ -313,26 +329,40 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                         <div
                             key={chat.id}
                             className={`chat-item ${chat.isActive ? 'active' : ''}`}
-                            onClick={() => handleChatClick(chat.id)} // Set active on click
+                            onClick={() => handleChatClick(chat.id)}
                         >
-                            {chat.title}
-                            <div
+                            {editingChatId === chat.id ? (
+                                <input
+                                    type="text"
+                                    value={editedChatTitle}
+                                    onChange={(e) => setEditedChatTitle(e.target.value)}
+                                    onKeyDown={(e) => handleKeyDown(e, chat.id)} 
+                                    autoFocus 
+                                    onBlur={() => updateChatTitle(chat.id)} 
+                                />
+                            ) : (
+                                <div onClick={() => handleEditClick(chat.id, chat.title)}>
+                                    {chat.title}
+                                </div>
+                            )}
 
+
+                            <div
                                 className="icon-container"
                                 onClick={(e) => toggleMenu(chat.id, e)}
                             >
                                 <i className="fa-solid fa-ellipsis-vertical"></i>
                             </div>
 
-
                             {openMenuChatId === chat.id && (
                                 <div
                                     className="option-chat"
                                     style={{ position: 'absolute', top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
-                                >
-                                    <p onClick={() => handleOptionChat("Edit")}>Edit</p>
-                                    <p onClick={() => handleOptionChat("Delete")}>Delete</p>
-                                </div>
+                                    onClick={(e) => e.stopPropagation()}  
+                                    >
+                                        <p onClick={(e) => handleOptionChat("Edit", e)}>Edit</p>  
+                                        <p onClick={(e) => handleOptionChat("Delete", e)}>Delete</p>  
+                                    </div>
                             )}
                         </div>
                     ))}
