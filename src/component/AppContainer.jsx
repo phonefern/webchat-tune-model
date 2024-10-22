@@ -12,6 +12,7 @@ import { db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import Typewriter from "typewriter-effect";
 import { auth } from '../firebase'; // Firebase auth
+import { storage, ref, uploadBytes, getDownloadURL } from '../firebase';
 
 const AppContainer = () => {
 
@@ -33,11 +34,48 @@ const AppContainer = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [chatToDelete, setChatToDelete] = useState(null);
+    const [openMenuChatId, setOpenMenuChatId] = useState(null);
+    const [editingChatId, setEditingChatId] = useState(null);
+    const [editedChatTitle, setEditedChatTitle] = useState('');
+    const [isBotLoading, setIsBotLoading] = useState(false);
 
-    // Toggle theme (light/dark)
     const toggleTheme = () => {
         setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
     };
+
+    const closeMenu = () => {
+        setOpenMenuChatId(null);
+    };
+
+    const handleOptionChat = (option, e) => {
+        e.stopPropagation();
+        if (option === 'Edit') {
+            console.log('Edit selected for chat:', openMenuChatId);
+
+            const chatToEdit = chatItems.find(chat => chat.id === openMenuChatId);
+
+            if (chatToEdit) {
+                setEditingChatId(openMenuChatId);
+                setEditedChatTitle(chatToEdit.title);
+            }
+        } else if (option === 'Delete') {
+            const chatToDelete = chatItems.find(chat => chat.id === openMenuChatId);
+            setChatToDelete(chatToDelete);
+            setIsDeleteModalOpen(true);
+            console.log("test pass de")
+        }
+
+        closeMenu();
+    };
+
+    const confirmDeleteChat = () => {
+        deleteChat(chatToDelete.id);
+        setIsDeleteModalOpen(false);
+        setChatToDelete(null);
+    };
+
 
     const isRecent = (date) => {
         const now = new Date();
@@ -67,7 +105,7 @@ const AppContainer = () => {
 
     useEffect(() => {
         const fetchChats = async () => {
-            if (!user) return; 
+            if (!user) return;
             try {
                 const chatCollection = collection(db, `users/${user.uid}/chats`);
                 const chatSnapshot = await getDocs(chatCollection);
@@ -77,17 +115,17 @@ const AppContainer = () => {
                         id: doc.id,
                         ...chatData,
                         isActive: false,
-                        date: chatData.date && chatData.date.toDate(),  
-                        isRecent: isRecent(chatData.date ? chatData.date.toDate() : new Date()),  
+                        date: chatData.date && chatData.date.toDate(),
+                        isRecent: isRecent(chatData.date ? chatData.date.toDate() : new Date()),
                     };
                 });
 
-            
+
                 const sortedChatList = chatList.sort((a, b) => b.date - a.date);
 
                 if (sortedChatList.length > 0) {
-                    sortedChatList[0].isActive = true; 
-                    setActiveChatId(sortedChatList[0].id); 
+                    sortedChatList[0].isActive = true;
+                    setActiveChatId(sortedChatList[0].id);
                 }
 
                 setChatItems(sortedChatList);
@@ -127,31 +165,31 @@ const AppContainer = () => {
 
     const handleChatClick = async (id) => {
         if (activeChatId === id && messages.length > 0) {
-            return; 
+            return;
         }
-        setMessages([]); 
-        setIsLoading(true); 
-        setActiveChatId(id);  
+        setMessages([]);
+        setIsLoading(true);
+        setActiveChatId(id);
 
         setChatItems(chatItems.map(chat => ({
             ...chat,
             isActive: chat.id === id
         })));
-        setIsOpen(close); 
+        setIsOpen(close);
         await new Promise(resolve => setTimeout(resolve, 2000));
         try {
             const messagesCollection = collection(db, `users/${user.uid}/chats/${id}/messages`);
-            const messagesQuery = query(messagesCollection, orderBy('timestamp', 'asc'));  
+            const messagesQuery = query(messagesCollection, orderBy('timestamp', 'asc'));
             const messagesSnapshot = await getDocs(messagesQuery);
             const messagesList = messagesSnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
-            setMessages(messagesList); 
+            setMessages(messagesList);
         } catch (error) {
             console.error("Error fetching messages: ", error);
         } finally {
-            setIsLoading(false); 
+            setIsLoading(false);
         }
     };
 
@@ -163,7 +201,7 @@ const AppContainer = () => {
     };
 
     const createNewChat = async () => {
-        const newChatTitle = "Start Chat"; 
+        const newChatTitle = "Start Chat";
         if (user) {
             const currentDate = new Date();
             const newChat = {
@@ -193,7 +231,7 @@ const AppContainer = () => {
     // Function to add messages to Firestore (user or bot)
     const addMessageToChat = async (activeChatId, messageText, sender) => {
 
-        if (!activeChatId || !user) return; 
+        if (!activeChatId || !user) return;
         try {
             const messagesCollection = collection(db, `users/${user.uid}/chats/${activeChatId}/messages`);
             const timestamp = new Date()
@@ -210,123 +248,229 @@ const AppContainer = () => {
         }
     };
 
-    
+
+    const formatBotMessage = (text) => {
+
+        let cleanedText = text.replace(/\*/g, "").trim();
+
+
+        cleanedText = cleanedText.replace(/\.\s*/g, '.\n');
+
+        return cleanedText;
+    };
+
+
     // const handleSendMessage = async (e) => {
     //     e.preventDefault();
 
     //     const userMessageText = question.trim();
-
-      
     //     if (!userMessageText && !imageFile) {
     //         setMessages((prevMessages) => [...prevMessages, { sender: "error", text: "กรุณากรอกคำถามหรือเลือกไฟล์ภาพ!" }]);
     //         return;
     //     }
 
     //     let currentChatId = activeChatId;
-
     //     if (!currentChatId) {
-    //         currentChatId = await createNewChat(); 
-    //         setActiveChatId(currentChatId); 
+    //         currentChatId = await createNewChat();
+    //         setActiveChatId(currentChatId);
     //     }
 
-     
-    //     const userMessage = { sender: "user", text: userMessageText || "Uploaded an image" , image: imagePreview};
-    //     addMessageToChat(currentChatId, userMessage.text, "user"); 
-    //     setMessages((prevMessages) => [...prevMessages, userMessage]); 
+    //     const userMessage = {
+    //         sender: "user",
+    //         text: userMessageText || "Uploaded an image",
+    //         image: imagePreview ? imagePreview : null
+    //     };
+    //     addMessageToChat(currentChatId, userMessage.text, "user");
+
+    //     setMessages((prevMessages) => [...prevMessages, userMessage]);
+
     //     setImagePreview(null);
-    //     setQuestion(''); 
-    //     setImageFile(null); 
+    //     setQuestion('');
+    //     setImageFile(null);
 
     //     try {
-            
-    //         const formData = new FormData();
-    //         formData.append('question', userMessageText ); 
-    //         if (imageFile) {
-    //             formData.append('image', imageFile); 
-    //         }
-    //         formData.append('model', selectedModel);
 
-    //         const response = await fetch("https://geminiapi-flame.vercel.app/api/index", {
+    //         const botLoadingMessage = { sender: "bot", text: "", isLoading: true };
+    //         setMessages((prevMessages) => [...prevMessages, botLoadingMessage]);
+    //         setIsBotLoading(true);
+
+    //         let imageUrl = null;
+
+
+    //         if (imageFile) {
+    //             const storageRef = ref(storage, `images/${imageFile.name}`);
+    //             await uploadBytes(storageRef, imageFile); 
+    //             imageUrl = await getDownloadURL(storageRef); 
+    //         }
+
+
+    //         const formData = new FormData();
+    //         formData.append('question', userMessageText || "What is this image?");
+    //         if (imageUrl) {
+    //             formData.append('imageUrl', imageUrl); 
+    //         }
+    //         console.log('Sending data:', { question: userMessageText, model: selectedModel, imageFile });
+
+    //         formData.append('model', selectedModel);
+    //         // const response = await fetch("https://gemini-image-api.vercel.app/api/ask-ai", {
+    //         // const response = await fetch("https://geminiapi-flame.vercel.app/api/index", {
     //         const response = await fetch("http://localhost:3000/ask-ai", {
     //             method: "POST",
-    //             body: formData, 
+    //             body: formData,
     //         });
 
     //         const result = await response.json();
-    //         console.log(result);
+    //         setIsBotLoading(false);
+    //         console.log(result)
     //         if (response.ok) {
-    //             const botMessageText = result.answer || "No answer received";
-    //             const botMessage = { sender: "bot", text: botMessageText };
+    //             const botMessageText = formatBotMessage(result.answer || "No answer received");
+    //             const botMessage = { sender: "bot", text: botMessageText, isLoading: false };
 
-    //             addMessageToChat(currentChatId, botMessage.text, "bot"); 
-    //             setMessages((prevMessages) => [...prevMessages, botMessage]); 
-    //             console.log("Send Messages Pass");
+
+    //             setMessages((prevMessages) => {
+    //                 const updatedMessages = [...prevMessages];
+    //                 updatedMessages[updatedMessages.length - 1] = botMessage;
+    //                 return updatedMessages;
+    //             });
+
+    //             addMessageToChat(currentChatId, botMessage.text, "bot");
     //         } else {
     //             const errorMessage = result.error || "Error occurred";
-    //             const errorMsg = { sender: "error", text: errorMessage };
-    //             setMessages((prevMessages) => [...prevMessages, errorMsg]);
+
+    //             setMessages((prevMessages) => {
+    //                 const updatedMessages = [...prevMessages];
+    //                 updatedMessages[updatedMessages.length - 1] = { sender: "error", text: errorMessage };
+    //                 return updatedMessages;
+    //             });
     //         }
     //     } catch (error) {
     //         console.error("Error:", error);
-    //         setMessages((prevMessages) => [...prevMessages, { sender: "error", text: "Cannot connect to server" }]);
+    //         setIsBotLoading(false);
+    //         setMessages((prevMessages) => {
+    //             const updatedMessages = [...prevMessages];
+    //             updatedMessages[updatedMessages.length - 1] = { sender: "error", text: "Cannot connect to server" };
+    //             return updatedMessages;
+    //         });
     //     }
     // };
-    
-    
+
+
+
+
+
     const handleSendMessage = async (e) => {
         e.preventDefault();
-
+    
         const userMessageText = question.trim();
-
+    
         
         if (!userMessageText) {
             setMessages((prevMessages) => [...prevMessages, { sender: "error", text: "กรุณากรอกคำถาม!" }]);
             return;
         }
+    
         let currentChatId = activeChatId;
-
+    
+        
         if (!currentChatId) {
-            currentChatId = await createNewChat(); 
-            setActiveChatId(currentChatId); 
+            currentChatId = await createNewChat();
+            setActiveChatId(currentChatId);
         }
-
-
+    
+        
         const userMessage = { sender: "user", text: userMessageText };
-        addMessageToChat(currentChatId, userMessage.text, "user"); 
-        setMessages((prevMessages) => [...prevMessages, userMessage]); 
+        addMessageToChat(currentChatId, userMessage.text, "user");
+        setMessages((prevMessages) => [...prevMessages, userMessage]);
         setQuestion(''); 
-
+    
+        
+        const botLoadingMessage = { sender: "bot", text: "กำลังประมวลผล...", isLoading: true };
+        setMessages((prevMessages) => [...prevMessages, botLoadingMessage]);
+        setIsBotLoading(true);
+    
         try {
-            const response = await fetch("https://geminiapi-flame.vercel.app/api/index", {
+            console.log('Sending data:', { question: userMessageText, model: selectedModel });
             // const response = await fetch("http://localhost:3000/ask-ai", {
-            // const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyAYinKiYLPNeCT5pqRQkpp5UDP_cO9pmYc', {
+            const response = await fetch("https://geminiapi-flame.vercel.app/api/index", { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ question: userMessageText, model: selectedModel }),
             });
-
+    
             const result = await response.json();
             console.log(result);
+    
+           
             if (response.ok) {
-                const botMessageText = result.answer || "No answer received";
-                const botMessage = { sender: "bot", text: botMessageText };
-
-                addMessageToChat(currentChatId, botMessage.text, "bot"); 
-                setMessages((prevMessages) => [...prevMessages, botMessage]); 
+                const botMessageText = formatBotMessage(result.answer || "No answer received");
+                const botMessage = { sender: "bot", text: botMessageText, isLoading: false };
+    
+               
+                setMessages((prevMessages) => {
+                    const updatedMessages = [...prevMessages];
+                    updatedMessages[updatedMessages.length - 1] = botMessage; 
+                    return updatedMessages;
+                });
+    
+                addMessageToChat(currentChatId, botMessage.text, "bot");
                 console.log("Send Messages Pass");
+    
             } else {
                 
                 const errorMessage = result.error || "Error occurred";
-                const errorMsg = { sender: "error", text: errorMessage };
-                setMessages((prevMessages) => [...prevMessages, errorMsg]);
+                setIsBotLoading(false);
+    
+                setMessages((prevMessages) => {
+                    const updatedMessages = [...prevMessages];
+                    updatedMessages[updatedMessages.length - 1] = { sender: "error", text: errorMessage };
+                    return updatedMessages;
+                });
             }
+    
         } catch (error) {
+          
             console.error("Error:", error);
-            
-            setMessages((prevMessages) => [...prevMessages, { sender: "error", text: "Cannot connect to server" }]);
+            setIsBotLoading(false);
+    
+            setMessages((prevMessages) => {
+                const updatedMessages = [...prevMessages];
+                updatedMessages[updatedMessages.length - 1] = { sender: "error", text: "Cannot connect to server" };
+                return updatedMessages;
+            });
+        } finally {
+            setIsBotLoading(false); 
         }
     };
     
+
+
+
+    const deleteChat = async (id) => {
+        if (user) {
+            try {
+
+                // await new Promise((resolve) => setTimeout(resolve, 2000));
+                await deleteDoc(doc(db, `users/${user.uid}/chats`, id));
+
+
+                setChatItems((prevChatItems) => prevChatItems.filter(chat => chat.id !== id));
+
+                if (activeChatId === id) {
+                    setActiveChatId(true);
+                    setMessages([]);
+                }
+
+                setActiveChatId(null);
+                setMessages([]);
+
+
+                setIsLoading(false);
+            } catch (error) {
+                console.error("Error deleting chat: ", error);
+            }
+        }
+    };
+
 
     // Handle input change
     const handleInputChange = (event) => {
@@ -345,6 +489,7 @@ const AppContainer = () => {
                         setIsModelMenuOpen={setIsModelMenuOpen}
                         setSelectedModel={setSelectedModel}
                         setAnimateHeaderLine={setAnimateHeaderLine}
+                        selectedModel={selectedModel}
                     />
                     <ThemeSwitcher theme={theme} toggleTheme={toggleTheme} />
                     <ChatContainer
@@ -359,6 +504,14 @@ const AppContainer = () => {
                         setSelectedFile={setSelectedFile}
                         setImageFile={setImageFile}
                         setImagePreview={setImagePreview}
+                        confirmDeleteChat={confirmDeleteChat}
+                        isDeleteModalOpen={isDeleteModalOpen}
+                        setIsDeleteModalOpen={setIsDeleteModalOpen}
+                        deleteChat={deleteChat}
+                        isBotLoading={isBotLoading}
+
+
+
                     />
                 </div>
                 <Drawer
@@ -370,11 +523,21 @@ const AppContainer = () => {
                     setChatItems={setChatItems}
                     // deleteChat={deleteChat}
                     handleChatClick={handleChatClick}
-                    
+                    handleOptionChat={handleOptionChat}
+                    openMenuChatId={openMenuChatId}
+                    setOpenMenuChatId={setOpenMenuChatId}
+                    deleteChat={deleteChat}
+                    editingChatId={editingChatId}
+                    editedChatTitle={editedChatTitle}
+                    setEditedChatTitle={setEditedChatTitle}
+                    setEditingChatId={setEditingChatId}
+
 
                 />
                 <BackDrop isOpen={isOpen} toggleDrawer={toggleDrawer} />
             </div>
+
+
         </div>
     );
 };

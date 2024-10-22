@@ -4,14 +4,12 @@ import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy, updateDoc 
 import { auth, db } from '../firebase'; // Firebase auth
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems, toggleDrawer, activeChatId, setIsLoading, handleChatClick }) => {
+const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems, toggleDrawer, activeChatId, setIsLoading, handleChatClick, handleOptionChat, openMenuChatId,setOpenMenuChatId,editingChatId,editedChatTitle,setEditedChatTitle,setEditingChatId  }) => {
 
     const user = auth.currentUser;
     const navigate = useNavigate();
-    const [openMenuChatId, setOpenMenuChatId] = useState(null);
+    
     const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
-    const [editingChatId, setEditingChatId] = useState(null);
-    const [editedChatTitle, setEditedChatTitle] = useState('');
 
     const toggleMenu = (chatId, e) => {
         e.stopPropagation();
@@ -28,33 +26,6 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
 
     
 
-
-    const deleteChat = async (id) => {
-        if (user) {
-            try {
-
-                // await new Promise((resolve) => setTimeout(resolve, 2000));
-                await deleteDoc(doc(db, `users/${user.uid}/chats`, id));
-
-
-                setChatItems((prevChatItems) => prevChatItems.filter(chat => chat.id !== id));
-
-                if (activeChatId === id) {
-                    setActiveChatId(true);
-                    setMessages([]);
-                }
-
-                // setActiveChatId(null);
-                // setMessages([]); 
-
-
-                setIsLoading(false);
-            } catch (error) {
-                console.error("Error deleting chat: ", error);
-            }
-        }
-    };
-
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (!event.target.closest('.option-chat') && !event.target.closest('.fa-ellipsis-vertical')) {
@@ -67,28 +38,6 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
-
-
-
-    const handleOptionChat = (option, e) => {
-        e.stopPropagation();
-        if (option === 'Edit') {
-            console.log('Edit selected for chat:', openMenuChatId);
-    
-            const chatToEdit = chatItems.find(chat => chat.id === openMenuChatId);
-    
-            if (chatToEdit) {
-               
-                setEditingChatId(openMenuChatId);
-                setEditedChatTitle(chatToEdit.title); 
-            }
-        } else if (option === 'Delete') {
-            deleteChat(openMenuChatId); 
-        }
-    
-        closeMenu(); 
-    };
-    
 
     const addNewChat = async () => {
         if (newChatTitle.trim() && user) {
@@ -233,7 +182,7 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
             {/* Chat History */}
             <div className="drawer-content">
                 <div className="drawer-setting">
-                    <h3>Recent</h3>
+                    <h3 style= {{ fontWeight: 'bold' }}>Recent</h3>
                     {chatItems.filter(chat => chat.isRecent).map(chat => (
                         <div
                             key={chat.id}
@@ -276,7 +225,7 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                         </div>
                     ))}
 
-                    <h3>Yesterday</h3>
+                    <h3 style= {{ fontWeight: 'bold' }}>Yesterday</h3>
                     {chatItems.filter(chat => !chat.isRecent && chat.date > (new Date().getTime() - (1000 * 60 * 60 * 24 * 2))).map(chat => (
                         <div
                         key={chat.id}
@@ -320,7 +269,7 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
 
                     ))}
 
-                    <h3>7 Days Before</h3>
+                    <h3 style= {{ fontWeight: 'bold' }}>7 Days Before</h3>
                     {chatItems.filter(chat =>
                         !chat.isRecent &&
                         chat.date <= (new Date().getTime() - (1000 * 60 * 60 * 24 * 2)) &&

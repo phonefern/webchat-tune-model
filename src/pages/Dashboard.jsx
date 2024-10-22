@@ -19,16 +19,16 @@ const Dashboard = () => {
     return () => unsubscribe(); // Cleanup subscription on unmount
   }, [navigate]);
 
-  // Add a useEffect to show loading GIF and navigate to ChatPage after 3 seconds
+  
   useEffect(() => {
-    setIsLoading(true); // Set loading to true
+    setIsLoading(true); 
 
     const timer = setTimeout(() => {
-      setIsLoading(false); // Stop showing the loading GIF
-      navigate('/app'); // Redirect to ChatPage after 3 seconds
+      setIsLoading(false); 
+      navigate('/app'); 
     }, 5000); 
 
-    return () => clearTimeout(timer); // Cleanup the timer on component unmount
+    return () => clearTimeout(timer); 
   }, [navigate]);
 
 
@@ -39,7 +39,7 @@ const Dashboard = () => {
       {isLoading ? ( 
         <div>
           {/* Display the loading GIF */}
-          <img src="../img/Opener Loading.gif" alt="Loading..." style={{width: '200px'}}/>
+          <img src="../img/Opener Loading.gif" alt="Loading..." style={{width: '250px'}}/>
           <h2>{isAnonymous ? 'Welcome, Guest!' : 'Welcome to your Dashboard'}</h2>
           <p>Redirecting to chat, please wait...</p>
         </div>
