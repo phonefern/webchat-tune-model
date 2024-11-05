@@ -1,0 +1,189 @@
+/* .chat-container {
+    height: 70vh;
+} */
+
+.option-chat {
+    position: absolute;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    width: 150px;
+    top: 300px;
+    /* right: 20px;  */
+    left: 200px;
+    z-index: 1000;
+    margin-left: 1em;
+}
+
+@media (max-width: 480px) {
+    .option-chat {
+        width: 120px;
+    }
+    
+}
+
+
+.option-chat p {
+    margin: 0;
+    cursor: pointer;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 16px;
+    color: #333;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.option-chat p:hover {
+    background-color: #e0e0e0;
+    color: #000;
+}
+
+.option-chat p:active {
+    background-color: #d0d0d0;
+}
+
+.option-chat p:first-child {
+    border-bottom: 1px solid #ddd;
+}
+
+.option-chat p:last-child {
+    border-bottom: none;
+}
+
+.icon-container:hover {
+    background-color: #333; /* Light background on hover */
+    cursor: pointer;
+    transform: scale(1.1); /* Slight zoom effect on hover */
+}
+
+.icon-container {
+    display: inline-block;
+    padding: 10px;
+    border-radius: 60px;
+    width: 35px;
+    transition: background-color 0.3s, transform 0.3s;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.icon-container :active {
+    background-color: #333;
+}
+
+.uploaded-image {
+    max-width: 100%; 
+    height: auto; 
+    border-radius: 8px; 
+    margin-top: 8px; 
+}
+
+
+.fa-file-image {
+    cursor: pointer;
+    padding: 20px;
+    background-color: aliceblue;
+    border-radius: 30px;
+}
+
+.fa-file-image:hover {
+
+    background-color: #cecfd1;
+}
+
+.fa-arrow-up {
+
+    cursor: pointer;
+    padding: 20px;
+    background-color: aliceblue;
+    border-radius: 30px;
+}
+
+.fa-arrow-up:hover {
+
+    background-color: #cecfd1;
+}
+
+@media (max-width: 768px) {
+
+    .fa-file-image {
+        padding: 10px;
+    }
+
+    .fa-arrow-up {
+        padding: 15px;
+    }
+}
+
+.loading-gif {
+    background-color: transparent; 
+    display: block;
+    margin: 0 auto; 
+    border: none; 
+    box-shadow: none; 
+    padding: 0; 
+    width: auto; 
+    height: auto;
+}
+
+.image-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Dim background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.image-modal-content {
+    position: relative;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.close-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: transparent;
+    border: none;
+    font-size: 3rem;
+    cursor: pointer;
+    color: white; 
+    transition: all 0.3s ease;
+}
+
+.close-button:hover {
+    background-color: transparent; 
+    color: #f00; 
+    transform: scale(1.1); 
+}
+
+.zoomed-image {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+#reloadButton {
+    display: none; /* ซ่อนปุ่มเริ่มต้น */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+}
