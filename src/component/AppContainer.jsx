@@ -20,7 +20,7 @@ const AppContainer = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [chatItems, setChatItems] = useState([]);
     const [newChatTitle, setNewChatTitle] = useState('');
-    const [selectedModel, setSelectedModel] = useState("package-data-bhh-main");
+    const [selectedModel, setSelectedModel] = useState("gemini-1.5-flash");
     const [activeChatId, setActiveChatId] = useState(null);
     const [theme, setTheme] = useState("light");
     const [isLoading, setIsLoading] = useState(false);
@@ -63,6 +63,7 @@ const AppContainer = () => {
         } else if (option === 'Delete') {
             const chatToDelete = chatItems.find(chat => chat.id === openMenuChatId);
             setChatToDelete(chatToDelete);
+            setIsOpen(false);
             setIsDeleteModalOpen(true);
             console.log("test pass de")
         }
@@ -390,8 +391,8 @@ const AppContainer = () => {
     
         try {
             console.log('Sending data:', { question: userMessageText, model: selectedModel });
-            const response = await fetch("http://localhost:3000/ask-ai", {
-            // const response = await fetch("https://geminiapi-flame.vercel.app/api/index", { 
+            // const response = await fetch("http://localhost:3000/ask-ai", {
+            const response = await fetch("https://geminiapi-flame.vercel.app/api/index", { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ question: userMessageText, model: selectedModel }),
@@ -491,7 +492,7 @@ const AppContainer = () => {
                         setAnimateHeaderLine={setAnimateHeaderLine}
                         selectedModel={selectedModel}
                     />
-                    <ThemeSwitcher theme={theme} toggleTheme={toggleTheme} />
+                    {/* <ThemeSwitcher theme={theme} toggleTheme={toggleTheme} /> */}
                     <ChatContainer
                         isOpen={isOpen}
                         messages={messages}
@@ -504,9 +505,6 @@ const AppContainer = () => {
                         setSelectedFile={setSelectedFile}
                         setImageFile={setImageFile}
                         setImagePreview={setImagePreview}
-                        confirmDeleteChat={confirmDeleteChat}
-                        isDeleteModalOpen={isDeleteModalOpen}
-                        setIsDeleteModalOpen={setIsDeleteModalOpen}
                         deleteChat={deleteChat}
                         isBotLoading={isBotLoading}
 
@@ -531,10 +529,15 @@ const AppContainer = () => {
                     editedChatTitle={editedChatTitle}
                     setEditedChatTitle={setEditedChatTitle}
                     setEditingChatId={setEditingChatId}
+                    confirmDeleteChat={confirmDeleteChat}
+                    isDeleteModalOpen={isDeleteModalOpen}
+                    setIsDeleteModalOpen={setIsDeleteModalOpen}
+                    setIsOpen={setIsOpen}
 
 
                 />
                 <BackDrop isOpen={isOpen} toggleDrawer={toggleDrawer} />
+                
             </div>
 
 

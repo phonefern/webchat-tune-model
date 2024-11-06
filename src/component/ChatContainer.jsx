@@ -1,14 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Typewriter from 'typewriter-effect'; // Assuming this is used in your project
 
-const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMessage, question, handleInputChange, setQuestion, theme, setImagePreview, setImageFile, isDeleteModalOpen, chatToDelete, setIsDeleteModalOpen, confirmDeleteChat, isBotLoading }) => {
+const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMessage, question, handleInputChange, setQuestion, theme, setImagePreview, setImageFile }) => {
 
     const [isModalOpen, setModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
-    const [inputVisible, setInputVisible] = useState(false);
-
-
-    const toggleInput = () => setInputVisible(!inputVisible);
 
 
     const openModal = (imageSrc) => {
@@ -43,9 +39,9 @@ const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMe
     };
 
 
-    // const scrollToBottom = () => {
-    //     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    // };
+    const scrollToBottom = () => {
+        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
 
 
 
@@ -59,9 +55,9 @@ const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMe
     }, [question]);
 
 
-    // useEffect(() => {
-    //     scrollToBottom();
-    // }, [messages]);
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
 
 
@@ -90,7 +86,7 @@ const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMe
         <div>
 
             <div className="chat-container">
-                {/* {!messages.length && !isLoading && (
+                {!messages.length && !isLoading && (
                     <div className={`greeting-message ${showGreeting ? "show" : ""}`}>
                         <p>Hello! How can I help you today?</p>
 
@@ -105,8 +101,9 @@ const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMe
                                 </button>
                             ))}
                         </div>
+
                     </div>
-                )} */}
+                )}
 
                 <div
                     className={`chat-box ${!messages.length && !isLoading ? "empty" : "filled"}`}
@@ -211,6 +208,8 @@ const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMe
                     <div ref={chatEndRef} />
                 </div>
 
+
+
                 {isModalOpen && (
                     <div className="image-modal-overlay" onClick={closeModal}>
                         <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -219,16 +218,6 @@ const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMe
                         </div>
                     </div>
                 )}
-
-
-
-
-
-
-
-
-
-
 
 
                 {/* Loading GIF */}
@@ -243,66 +232,37 @@ const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMe
             <div className={`bot-container ${theme}`}>
                 <div className={`bottom-section ${isOpen ? 'drawer-open' : ''}`}>
                     <div className="input-container flex flex-col">
-                       <div className='flex  gap-3'>
-                       <input
-                            type="text"
-                            id="question"
-                            value={question}
-                            onChange={handleInputChange}
-                            placeholder="ถามมาได้เลยจ้า..."
-                            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                        />
+                        <div className='flex  gap-3'>
+                            <input
+                                type="text"
+                                id="question"
+                                value={question}
+                                onChange={handleInputChange}
+                                placeholder="ถามมาได้เลยจ้า..."
+                                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                            />
 
-                        <i className="fa-solid fa-arrow-up" onClick={handleSendMessage}></i>
+                            <i className="fa-solid fa-arrow-up" onClick={handleSendMessage}></i>
 
 
-                        {/* <i className="fa-solid fa-file-image" onClick={triggerFileInput} ></i> */}
-                        <input
-                            type="file"
-                            id="file-input"
-                            style={{ display: 'none' }}
-                            onChange={handleFileChange}
-                        />
-                        
-                       </div>
-                          <h4 className="follow_text_gen">
+                            {/* <i className="fa-solid fa-file-image" onClick={triggerFileInput} ></i> */}
+                            <input
+                                type="file"
+                                id="file-input"
+                                style={{ display: 'none' }}
+                                onChange={handleFileChange}
+                            />
+
+                        </div>
+                        <h4 className="follow_text_gen">
                             Copyright © 2024 โรงพยาบาลกรุงเทพ หาดใหญ่
                         </h4>
                     </div>
-                  
+
 
 
                 </div>
             </div>
-
-            {isDeleteModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-                        <p className="text-lg d mb-4">
-                            Are you sure you want to delete the chat ?
-                        </p>
-                        <div className="flex justify-around mt-6">
-                            <button
-                                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
-                                onClick={() => confirmDeleteChat()}
-                            >
-                                Yes, Delete
-                            </button>
-                            <button
-                                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
-                                onClick={() => setIsDeleteModalOpen(false)}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-
-
-
-
 
         </div>
 

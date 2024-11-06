@@ -166,6 +166,27 @@
     transform: scale(1.1); 
 }
 
+.close-button2 {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: transparent;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: red; 
+    transition: all 0.3s ease;
+}
+
+.close-button2:hover {
+    background-color: transparent; 
+    color: #f00; 
+    transform: scale(1.1); 
+}
+
+
+
+
 .zoomed-image {
     max-width: 90vw;
     max-height: 90vh;
