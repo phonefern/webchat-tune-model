@@ -12,6 +12,7 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
     const [isModalsettingOpen, setIsModalsettingOpen] = useState(false);
     const [isModalhelpOpen, setIsModalhelpOpen] = useState(false);
     const [theme, setTheme] = useState("light");
+    
 
     const toggleTheme = () => {
         setIsDarkMode(!isDarkMode);
@@ -180,7 +181,7 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
 
     return (
         <div>
-            <div className={`drawer ${isOpen ? 'open' : ''}`}>
+            <div className={`drawer relative h-full w-64 bg-white shadow-lg ${isOpen ? 'open' : ''}`}>
                 <div className="menu-icon" onClick={toggleDrawer}>
                     <i className="fa-solid fa-bars"></i>
                 </div>
@@ -234,7 +235,7 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                                 {openMenuChatId === chat.id && (
                                     <div
                                         className="option-chat"
-                                        style={{ position: 'absolute', top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
+                                        style={{ position: 'fixed', top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
                                         onClick={(e) => e.stopPropagation()}
                                     >
                                         <p onClick={(e) => handleOptionChat("Edit", e)}>Edit</p>
@@ -277,7 +278,7 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                                 {openMenuChatId === chat.id && (
                                     <div
                                         className="option-chat"
-                                        style={{ position: 'absolute', top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
+                                        style={{ position: 'fixed', top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
                                         onClick={(e) => e.stopPropagation()}
                                     >
                                         <p onClick={(e) => handleOptionChat("Edit", e)}>Edit</p>
@@ -325,7 +326,7 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                                 {openMenuChatId === chat.id && (
                                     <div
                                         className="option-chat"
-                                        style={{ position: 'absolute', top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
+                                        style={{ position: 'fixed', top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
                                         onClick={(e) => e.stopPropagation()}
                                     >
                                         <p onClick={(e) => handleOptionChat("Edit", e)}>Edit</p>
@@ -336,18 +337,18 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                         ))}
 
                         {/* Footer */}
-                        <div className="drawer-footer">
-                            <div className="footer-item" onClick={toggleModalsetting}>
+                        <div className="drawer-footer absolute bottom-0 left-0 w-full p-4  border-t border-gray-200">
+                            <div className="footer-item flex items-center cursor-pointer text-gray-700 hover:text-black mb-2" onClick={toggleModalsetting}>
                                 <i className="fa-solid fa-gear"></i>
-                                <span style={{ marginLeft: '8px' }}>Settings</span>
+                                <span className="ml-2">Settings</span>
                             </div>
-                            <div className="footer-item" onClick={handleHelp}>
+                            <div className="footer-item flex items-center cursor-pointer text-gray-700 hover:text-black mb-2" onClick={handleHelp}>
                                 <i className="fa-solid fa-circle-question"></i>
-                                <span style={{ marginLeft: '8px' }}>Help</span>
+                                <span className="ml-2">Help</span>
                             </div>
-                            <div className="footer-item" onClick={handleLogout}>
+                            <div className="footer-item flex items-center cursor-pointer text-gray-700 hover:text-black" onClick={handleLogout}>
                                 <i className="fa-solid fa-right-from-bracket"></i>
-                                <span style={{ marginLeft: '8px' }}>Logout</span>
+                                <span className="ml-2">Logout</span>
                             </div>
                         </div>
 
@@ -356,11 +357,11 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
 
                 </div>
             </div>
-                      
+
             {isDeleteModalOpen && (
                 <div className="p-4 w-full fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-                        <p className="text-lg d mb-4">
+                        <p className="text-lg d justify-between border-b pb-2 mb-4">
                             Are you sure you want to delete the chat ?
                         </p>
                         <div className="flex justify-around mt-6">
@@ -381,114 +382,114 @@ const Drawer = ({ isOpen, newChatTitle, setNewChatTitle, chatItems, setChatItems
                 </div>
             )}
             <>
-            {isModalsettingOpen && (
-                <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96 relative">
+                {isModalsettingOpen && (
+                    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96 relative">
 
-                        {/* Header */}
-                        <div className="flex items-center justify-between border-b pb-2 mb-4">
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">การตั้งค่า</h2>
-                            <button
-                                onClick={toggleModalsetting}
-                                className="close-button2"
-                            >
-                                <i className="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-
-
-
-                        {/* Settings Options */}
-                        <div className="space-y-4">
-
-                            {/* Theme Dropdown */}
-                            <div className="flex items-center justify-between">
-                                <label className="text-gray-800 dark:text-gray-300">ธีม</label>
-                                <select
-                                    className="border rounded px-2 py-1 dark:bg-gray-700 dark:text-gray-200"
-                                    value={theme}
-                                    onChange={(e) => setTheme(e.target.value)}
+                            {/* Header */}
+                            <div className="flex items-center justify-between border-b pb-2 mb-4">
+                                <h2 className="text-xl font-semibold text-gray-800 dark:text-white">การตั้งค่า</h2>
+                                <button
+                                    onClick={toggleModalsetting}
+                                    className="close-button2"
                                 >
-                                    <option value="light">สว่าง</option>
-                                    <option value="dark">มืด</option>
-                                </select>
+                                    <i className="fa-solid fa-xmark"></i>
+                                </button>
                             </div>
 
-                            {/* Toggle Option */}
-                            <div className="flex items-center justify-between">
-                                <span className="text-gray-800 dark:text-gray-300">แสดงโค้ดเสมือนมือ</span>
-                                <label className="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" className="sr-only" />
-                                    <div className="w-10 h-5 bg-gray-200 rounded-full peer dark:bg-gray-600">
-                                        <div className="dot absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5 dark:bg-gray-300"></div>
-                                    </div>
-                                </label>
-                            </div>
 
-                            {/* Language Dropdown */}
-                            <div className="flex items-center justify-between">
-                                <label className="text-gray-800 dark:text-gray-300">ภาษา</label>
-                                <select className="border rounded px-2 py-1 dark:bg-gray-700 dark:text-gray-200">
-                                    <option>ตรวจจับอัตโนมัติ</option>
-                                    <option>ภาษาไทย</option>
-                                    <option>ภาษาอังกฤษ</option>
-                                </select>
-                            </div>
 
-                            {/* Manage Chat */}
-                            <div className="flex items-center justify-between">
-                                <span className="text-gray-800 dark:text-gray-300">แชทที่เก็บถาวร</span>
-                                <button className="px-4 py-1 bg-gray-100 text-gray-700 rounded dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-gray-600">จัดการ</button>
-                            </div>
+                            {/* Settings Options */}
+                            <div className="space-y-4">
 
-                            {/* Clear All Chats */}
-                            <div className="flex items-center justify-between">
-                                <span className="text-gray-800 dark:text-gray-300">ลบแชททั้งหมด</span>
-                                <button className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600">ลบทิ้งหมด</button>
+                                {/* Theme Dropdown */}
+                                <div className="flex items-center justify-between">
+                                    <label className="text-gray-800 dark:text-gray-300">ธีม</label>
+                                    <select
+                                        className="border rounded px-2 py-1 dark:bg-gray-700 dark:text-gray-200"
+                                        value={theme}
+                                        onChange={(e) => setTheme(e.target.value)}
+                                    >
+                                        <option value="light">สว่าง</option>
+                                        <option value="dark">มืด</option>
+                                    </select>
+                                </div>
+
+                                {/* Toggle Option */}
+                                <div className="flex items-center justify-between">
+                                    <span className="text-gray-800 dark:text-gray-300">แสดงโค้ดเสมือนมือ</span>
+                                    <label className="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" className="sr-only" />
+                                        <div className="w-10 h-5 bg-gray-200 rounded-full peer dark:bg-gray-600">
+                                            <div className="dot absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5 dark:bg-gray-300"></div>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                {/* Language Dropdown */}
+                                <div className="flex items-center justify-between">
+                                    <label className="text-gray-800 dark:text-gray-300">ภาษา</label>
+                                    <select className="border rounded px-2 py-1 dark:bg-gray-700 dark:text-gray-200">
+                                        <option>ตรวจจับอัตโนมัติ</option>
+                                        <option>ภาษาไทย</option>
+                                        <option>ภาษาอังกฤษ</option>
+                                    </select>
+                                </div>
+
+                                {/* Manage Chat */}
+                                <div className="flex items-center justify-between">
+                                    <span className="text-gray-800 dark:text-gray-300">แชทที่เก็บถาวร</span>
+                                    <button className="px-4 py-1 bg-gray-100 text-gray-700 rounded dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-gray-600">จัดการ</button>
+                                </div>
+
+                                {/* Clear All Chats */}
+                                <div className="flex items-center justify-between">
+                                    <span className="text-gray-800 dark:text-gray-300">ลบแชททั้งหมด</span>
+                                    <button className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600">ลบทิ้งหมด</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {isModalhelpOpen && (
-                <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96 relative">
-                        {/* ส่วนหัวของ Modal */}
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Help - Askmedi Chatbot AI</h2>
+                {isModalhelpOpen && (
+                    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96 relative">
+                            {/* ส่วนหัวของ Modal */}
+                            <div className="flex items-center justify-between border-b pb-2 mb-4">
+                                <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Help - Askmedi Chatbot AI</h2>
 
-                            {/* ปุ่มปิด Modal */}
-                            <button
-                                onClick={() => setIsModalhelpOpen(false)}
-                                className="close-button2"
-                            >
-                                <i className="fa-solid fa-xmark"></i>
-                            </button>
+                                {/* ปุ่มปิด Modal */}
+                                <button
+                                    onClick={() => setIsModalhelpOpen(false)}
+                                    className="close-button2"
+                                >
+                                    <i className="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+
+                            {/* เนื้อหาใน Modal */}
+                            <p className="text-gray-500 dark:text-gray-300 mb-4">
+                                ยินดีต้อนรับสู่ระบบช่วยเหลือของ  Chatbot AI!
+                            </p>
+                            <p className="text-gray-600 dark:text-gray-300 mb-6">
+                                คุณสามารถถามคำถามที่เกี่ยวข้องกับการใช้งานระบบได้ หรือใช้คำสั่งต่าง ๆ เพื่อรับคำตอบที่รวดเร็วและมีประโยชน์ ตัวอย่างคำสั่งที่สามารถใช้ได้เช่น:
+                            </p>
+
+                            <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 mb-6 space-y-2">
+                                <li><strong>How to use:</strong> ถามเกี่ยวกับวิธีการใช้งานฟีเจอร์ต่าง ๆ</li>
+                                <li><strong>Account issues:</strong> แจ้งปัญหาหรือสอบถามเกี่ยวกับบัญชีของคุณ</li>
+                                <li><strong>Settings:</strong> ขอคำแนะนำเกี่ยวกับการตั้งค่า Chatbot</li>
+                            </ul>
+
+                            <p className="text-gray-600 dark:text-gray-300 mb-6">
+                                เราพร้อมที่จะช่วยเหลือคุณ หากมีข้อสงสัยสามารถติดต่อทีมสนับสนุนได้ตลอดเวลา!
+                            </p>
+
+
                         </div>
-
-                        {/* เนื้อหาใน Modal */}
-                        <p className="text-gray-500 dark:text-gray-300 mb-4">
-                            ยินดีต้อนรับสู่ระบบช่วยเหลือของ  Chatbot AI!
-                        </p>
-                        <p className="text-gray-600 dark:text-gray-300 mb-6">
-                            คุณสามารถถามคำถามที่เกี่ยวข้องกับการใช้งานระบบได้ หรือใช้คำสั่งต่าง ๆ เพื่อรับคำตอบที่รวดเร็วและมีประโยชน์ ตัวอย่างคำสั่งที่สามารถใช้ได้เช่น:
-                        </p>
-
-                        <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 mb-6 space-y-2">
-                            <li><strong>How to use:</strong> ถามเกี่ยวกับวิธีการใช้งานฟีเจอร์ต่าง ๆ</li>
-                            <li><strong>Account issues:</strong> แจ้งปัญหาหรือสอบถามเกี่ยวกับบัญชีของคุณ</li>
-                            <li><strong>Settings:</strong> ขอคำแนะนำเกี่ยวกับการตั้งค่า Chatbot</li>
-                        </ul>
-
-                        <p className="text-gray-600 dark:text-gray-300 mb-6">
-                            เราพร้อมที่จะช่วยเหลือคุณ หากมีข้อสงสัยสามารถติดต่อทีมสนับสนุนได้ตลอดเวลา!
-                        </p>
-
-
                     </div>
-                </div>
-            )}
+                )}
             </>
         </div >
     );

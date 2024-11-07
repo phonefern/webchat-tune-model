@@ -30,7 +30,7 @@ const AppContainer = () => {
     const [messages, setMessages] = useState([]);
     const [question, setQuestion] = useState("");
     const [animateHeaderLine, setAnimateHeaderLine] = useState(false);
-    const [isModelMenuOpen, setIsModelMenuOpen] = useState(false);
+  
     const [selectedFile, setSelectedFile] = useState(null);
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
@@ -94,12 +94,12 @@ const AppContainer = () => {
     }, []);
 
     useEffect(() => {
-        // Simulate a loading delay of 4 seconds
+        
         const timer = setTimeout(() => {
             setIsLoading(false);
         }, 2000);
 
-        // Cleanup function to clear the timer if the component unmounts
+     
         return () => clearTimeout(timer);
     }, []);
 
@@ -485,9 +485,7 @@ const AppContainer = () => {
                     <Header
                         toggleDrawer={toggleDrawer}
                         isOpen={isOpen}
-                        isModelMenuOpen={isModelMenuOpen}
                         animateHeaderLine={animateHeaderLine}
-                        setIsModelMenuOpen={setIsModelMenuOpen}
                         setSelectedModel={setSelectedModel}
                         setAnimateHeaderLine={setAnimateHeaderLine}
                         selectedModel={selectedModel}

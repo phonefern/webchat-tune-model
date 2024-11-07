@@ -17,7 +17,6 @@ const availableModels = {
   "gemini-1.5-flash": genAI.getGenerativeModel({ model: "gemini-1.5-flash" }),
   "packagetestv2-nettsfkvxpqs": genAI.getGenerativeModel({ model: "tunedModels/packagetestv2-nettsfkvxpqs" }),
   "package-data-bhh-main": genAI.getGenerativeModel({ model: "tunedModels/package-data-bhh-main" }),
-  "package-data-bhh-main-v4": genAI.getGenerativeModel({ model: "tunedModels/package-data-bhh-main-v4" }),
 };
 
 // Set up multer to handle file uploads

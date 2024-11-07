@@ -115,7 +115,6 @@ const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMe
                         messages.map((msg, index) => {
                             console.log("Rendering message:", msg);
 
-
                             const isUserMessage = msg.sender === "user";
                             const isBotMessageLoading = msg.sender === "bot" && msg.isLoading;
 
@@ -140,8 +139,6 @@ const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMe
                                 msg.sender === "bot" && msg.text.includes(keyword)
                             ).map(keyword => keywordImageMap[keyword]);
 
-
-
                             return (
                                 <div
                                     key={index}
@@ -152,16 +149,17 @@ const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMe
                                             <img src={msg.image} alt="User uploaded" className="uploaded-image" />
                                         )}
 
+                                        {/* Render related images based on keywords in the bot message */}
                                         {matchedImages.map((imageSrc, i) => (
                                             <img key={i} src={imageSrc}
                                                 alt={`Related to keyword ${i + 1}`}
                                                 className="special-package-image"
                                                 style={{ width: '150px', height: '200px', margin: '5px' }}
-                                                onClick={(() => openModal(imageSrc))}
+                                                onClick={() => openModal(imageSrc)}
                                             />
                                         ))}
-                                        {/* <br /> */}
 
+                                        {/* Display bot message content or loading animation */}
                                         {isBotMessageLoading ? (
                                             <img
                                                 src="../img/Message.gif"
@@ -173,7 +171,6 @@ const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMe
                                             isUserMessage ? (
                                                 <span>{msg.text}</span>
                                             ) : (
-
                                                 msg.text.length < 100 ? (
                                                     <Typewriter
                                                         options={{ delay: 5 }}
@@ -182,7 +179,6 @@ const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMe
                                                         }}
                                                     />
                                                 ) : (
-
                                                     msg.text.split('\n').map((line, i) => (
                                                         <span key={i}>
                                                             {line}
@@ -193,20 +189,19 @@ const ChatContainer = ({ isOpen, isLoading, showGreeting, messages, handleSendMe
                                             )
                                         )}
 
-
+                                        {/* Render user-uploaded image again if provided */}
                                         {msg.image && (
                                             <img src={msg.image} alt="User uploaded" className="uploaded-image" />
                                         )}
-
                                     </div>
                                 </div>
                             );
                         })
                     )}
 
-
                     <div ref={chatEndRef} />
                 </div>
+
 
 
 
